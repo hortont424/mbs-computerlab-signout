@@ -3,15 +3,17 @@
 import datetime
 import db
 
-resid = db.getResourceId("Lab Computers")
+computers_id = db.getResourceId("Lab Computers")
+laptops_id = db.getResourceId("Laptops")
+projectors_id = db.getResourceId("Projectors")
 
 def generateDaySlots(weekOf, startTime):
     daySlots = ""
     day = datetime.datetime.combine(weekOf, startTime)
     
     for i in range(0, 5):
-        entries = db.getEntries(day.date(), startTime, resid)
-        quantity = db.getResourceQuantity(resid)
+        entries = db.getEntries(day.date(), startTime, computers_id)
+        quantity = db.getResourceQuantity(computers_id)
         
         if entries:
             daySlots += "<td class='tFilled'>"
@@ -74,52 +76,71 @@ def generateComputersPage(weekOf):
         startTime = startTime + datetime.timedelta(minutes=40)
         endTime = endTime + datetime.timedelta(minutes=40)
 
-class DisplayPage:
-    def computers(self, date=None):
-        yield """
-        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-            "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-        <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-        <head>
-            <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-            <title>MBS Technology Signout</title>
-            <link rel="stylesheet" href="/static/style.css" type="text/css" charset="utf-8" />
-        </head>
-        <body id="tab1">
-            <div id="header">
-                <a href="/"><img src="/static/signout-logo.png" id="logo"/></a>
-                <ul id="tabnav">
-                    <li class="tab1"><a href="/computers">Lab Computers</a></li>
-                    <li class="tab2"><a href="/laptops">Laptops</a></li>
-                    <li class="tab3"><a href="/projectors">Projectors</a></li>
-                </ul>
-            </div>
-            <a href="signout_computers.html"><div id="signoutButton">
-                <img src="/static/add.tiff" valign="top"/> Sign out computers
-            </div></a>
-            <div id="schedule">"""
-        
-        if date is None:
-            date = datetime.date.today()
-        else:
-            try:
-                date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
-            except:
-                date = datetime.date.today()
-        
-        if date.weekday():
-            tmpdate = datetime.datetime.combine(date, datetime.time(0,0))
-            tmpdate = tmpdate - datetime.timedelta(days=date.weekday())
-            date = tmpdate
-        
-        yield "".join(list(generateComputersPage(date)))
-        
-        yield """
-            </div>
-        </body>
-        </html>"""
+def generateTabs():
+    t = "<ul id='tabnav'>"
+    
+    for res in db.getResources():
+        t += "<li class='tab%(id)d'><a href='/%(slug)s'>%(name)s</a></li>" % {
+            "id": res[0], "name": res[1], "slug": res[2]}
+    
+    t += "</ul>"
+    return t
 
+class DisplayPage:
+    def tabbedSchedulePage(type):
+        def pg(self, date=None):
+            yield """
+            <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+            <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+            <head>
+                <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+                <title>MBS Technology Signout</title>
+                <link rel="stylesheet" href="/static/style.css" type="text/css" charset="utf-8" />
+            </head>
+            <body id="tab%(id)d">
+                <div id="header">
+                    <a href="/"><img src="/static/signout-logo.png" id="logo"/></a>
+                    %(tabs)s
+                </div>
+                <a href="/%(slug)s/signout"><div id="signoutButton">
+                    <img src="/static/add.tiff" valign="top"/> Sign out %(slug)s
+                </div></a>
+                <div id="schedule">""" % {
+                    "id": type,
+                    "name": db.getResourceName(type),
+                    "slug": db.getResourceSlug(type),
+                    "tabs": generateTabs() }
+
+            if date is None:
+                date = datetime.date.today()
+            else:
+                try:
+                    date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+                except:
+                    date = datetime.date.today()
+
+            if date.weekday():
+                tmpdate = datetime.datetime.combine(date, datetime.time(0,0))
+                tmpdate = tmpdate - datetime.timedelta(days=date.weekday())
+                date = tmpdate
+
+            yield "".join(list(generateComputersPage(date)))
+
+            yield """
+                </div>
+            </body>
+            </html>"""
+        return pg
+    
+    computers = tabbedSchedulePage(computers_id)
     computers.exposed = True
+    
+    laptops = tabbedSchedulePage(laptops_id)
+    laptops.exposed = True
+    
+    projectors = tabbedSchedulePage(projectors_id)
+    projectors.exposed = True
     
     index = computers
     index.exposed = True

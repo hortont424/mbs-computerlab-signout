@@ -15,9 +15,24 @@ def getTeacher(t_id):
     c.execute("select name from teachers where id=?", (t_id,))
     return c.fetchone()[0]
 
+def getResources():
+    c = connect()
+    c.execute("select * from resources")
+    return c.fetchall()
+
 def getResourceId(res):
     c = connect()
     c.execute("select id from resources where name=?", (res,))
+    return c.fetchone()[0]
+
+def getResourceName(r_id):
+    c = connect()
+    c.execute("select name from resources where id=?", (r_id,))
+    return c.fetchone()[0]
+
+def getResourceSlug(r_id):
+    c = connect()
+    c.execute("select slug from resources where id=?", (r_id,))
     return c.fetchone()[0]
 
 def getResourceQuantity(r_id):
@@ -27,9 +42,9 @@ def getResourceQuantity(r_id):
 
 def loadData(c):
     c.executescript(readFile("sql.txt"))
-    c.execute("insert into resources values (?,?,?,?)", (1,"Lab Computers","",25))
-    c.execute("insert into resources values (?,?,?,?)", (2,"Laptops","",20))
-    c.execute("insert into resources values (?,?,?,?)", (3,"Projectors","",2))
+    c.execute("insert into resources values (?,?,?,?,?)", (1,"Lab Computers","computers","",25))
+    c.execute("insert into resources values (?,?,?,?,?)", (2,"Laptops","laptops","",20))
+    c.execute("insert into resources values (?,?,?,?,?)", (3,"Projectors","projectors","",2))
     
     c.execute("insert into teachers values (?,?,?)", (None,"Eaton",""))
     c.execute("insert into teachers values (?,?,?)", (None,"Cheney",""))

@@ -7,6 +7,7 @@ CREATE TABLE "teachers" (
 CREATE TABLE "resources" (
     "id" integer NOT NULL PRIMARY KEY,
     "name" varchar(256) NOT NULL,
+    "slug" varchar(256) NOT NULL,
     "comment" text NOT NULL,
     "quantity" integer unsigned NOT NULL
 );
