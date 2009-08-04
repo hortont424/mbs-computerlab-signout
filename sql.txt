@@ -1,0 +1,23 @@
+BEGIN;
+CREATE TABLE "teachers" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "name" varchar(256) NOT NULL,
+    "comment" text NOT NULL
+);
+CREATE TABLE "resources" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "name" varchar(256) NOT NULL,
+    "comment" text NOT NULL,
+    "quantity" integer unsigned NOT NULL
+);
+CREATE TABLE "entries" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "day" date NOT NULL,
+    "start_time" time NOT NULL,
+    "end_time" time NOT NULL,
+    "comment" text NOT NULL,
+    "quantity" integer unsigned NOT NULL,
+    "signee_id" integer NOT NULL REFERENCES "resources" ("id"),
+    "signer_id" integer NOT NULL REFERENCES "teachers" ("id")
+);
+COMMIT;
