@@ -12,9 +12,19 @@ def getEntries(day,time,type):
               (day.strftime("%Y-%m-%d"), time.strftime("%I:%M"), type))
     return c.fetchall()
 
-def getTeacher(t_id):
+def getTeachers():
+    c = connect()
+    c.execute("select * from teachers")
+    return c.fetchall()
+
+def getTeacherName(t_id):
     c = connect()
     c.execute("select name from teachers where id=?", (t_id,))
+    return c.fetchone()[0]
+
+def getTeacherId(t):
+    c = connect()
+    c.execute("select id from teachers where name=?", (t,))
     return c.fetchone()[0]
 
 def getResources():
@@ -66,10 +76,8 @@ def loadData(c):
     c.execute("insert into teachers values (?,?,?)", (None,"Fitzpatrick",""))
     
     c_id = 1
-    c.execute('select id from teachers where name=?', ("Cheney",))
-    cheney_id = c.fetchone()[0]
-    c.execute('select id from teachers where name=?', ("Eaton",))
-    eaton_id = c.fetchone()[0]
+    cheney_id = getTeacherId("Cheney")
+    eaton_id = getTeacherId("Eaton")
     c.execute("insert into entries values (?,?,?,?,?,?,?,?)",
         (None, "2009-08-05", "08:45", "09:20", "", 5, c_id, eaton_id))
     c.execute("insert into entries values (?,?,?,?,?,?,?,?)",

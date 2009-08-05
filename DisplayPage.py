@@ -18,7 +18,7 @@ def generateDaySlots(weekOf, startTime, type):
         
         for entry in entries:
             daySlots += "<div class='entry'>"
-            daySlots += db.getTeacher(entry[7])
+            daySlots += db.getTeacherName(entry[7])
             daySlots += " (%(q)d)" % {"q": entry[5]}
             daySlots += "</div>"
             quantity -= entry[5]
@@ -87,7 +87,7 @@ class tabbedSchedulePage:
         self.type = t
         
     def index(self, date=None):
-        yield """
+        src = """
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
             "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -123,10 +123,12 @@ class tabbedSchedulePage:
             tmpdate = tmpdate - datetime.timedelta(days=date.weekday())
             date = tmpdate
 
-        yield "".join(list(generateSchedulePage(date,self.type)))
+        src += "".join(list(generateSchedulePage(date,self.type)))
 
-        yield """
+        src += """
             </div>
         </body>
         </html>"""
+        
+        return src
     index.exposed = True

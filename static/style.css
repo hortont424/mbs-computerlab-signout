@@ -55,6 +55,12 @@ a
 {
 	color: #000;
 	text-decoration: none;
+	border: 0px solid black;
+}
+
+img
+{
+	border: 0px;
 }
 
 body
@@ -71,6 +77,7 @@ body
 #logo
 {
 	padding: 20px 15px 10px 15px;
+	border: 0px;
 }
 
 #signoutButton
@@ -149,7 +156,7 @@ div.signoutEntry
 	font-weight: bold;
 }
 
-#headerButton
+#headerButton, div.headerButton
 {
 	font-size: 2em;
 	margin: 20px 15%;
