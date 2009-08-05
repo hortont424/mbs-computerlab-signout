@@ -4,6 +4,8 @@ import datetime
 import sqlite3
 from utils import *
 
+db = None
+
 def getEntries(day,time,type):
     c = connect()
     c.execute("select * from entries where day=? and start_time=? and signee_id=?",
@@ -80,7 +82,8 @@ def loadData(c):
         (None, "2009-08-05", "09:25", "10:00", "", 5, c_id, eaton_id))
 
 def connect():
-    db = sqlite3.connect(':memory:')
+    db = sqlite3.connect('signout.db')
     c = db.cursor()
-    loadData(c)
+    #loadData(c)
+    #db.commit()
     return c

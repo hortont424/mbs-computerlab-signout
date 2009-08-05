@@ -82,65 +82,51 @@ def generateTabs():
     t += "</ul>"
     return t
 
-class DisplayPage:
-    computers_id = db.getResourceId("Lab Computers")
-    laptops_id = db.getResourceId("Laptops")
-    projectors_id = db.getResourceId("Projectors")
-    
-    def tabbedSchedulePage(type):
-        def pg(self, date=None):
-            yield """
-            <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-            <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-            <head>
-                <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-                <title>MBS Technology Signout</title>
-                <link rel="stylesheet" href="/static/style.css" type="text/css" charset="utf-8" />
-            </head>
-            <body id="tab%(id)d">
-                <div id="header">
-                    <a href="/"><img src="/static/signout-logo.png" id="logo"/></a>
-                    %(tabs)s
-                </div>
-                <a href="/%(slug)s/signout"><div id="signoutButton">
-                    <img src="/static/add.tiff" valign="top"/> Sign out %(slug)s
-                </div></a>
-                <div id="schedule">""" % {
-                    "id": type,
-                    "name": db.getResourceName(type),
-                    "slug": db.getResourceSlug(type),
-                    "tabs": generateTabs() }
+class tabbedSchedulePage:
+    def __init__(self, t):
+        self.type = t
+        
+    def index(self, date=None):
+        yield """
+        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+            "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+        <head>
+            <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+            <title>MBS Technology Signout</title>
+            <link rel="stylesheet" href="/static/style.css" type="text/css" charset="utf-8" />
+        </head>
+        <body id="tab%(id)d">
+            <div id="header">
+                <a href="/"><img src="/static/signout-logo.png" id="logo"/></a>
+                %(tabs)s
+            </div>
+            <a href="/%(slug)s/signout"><div id="signoutButton">
+                <img src="/static/add.tiff" valign="top"/> Sign out %(slug)s
+            </div></a>
+            <div id="schedule">""" % {
+                "id": self.type,
+                "name": db.getResourceName(self.type),
+                "slug": db.getResourceSlug(self.type),
+                "tabs": generateTabs() }
 
-            if date is None:
+        if date is None:
+            date = datetime.date.today()
+        else:
+            try:
+                date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+            except:
                 date = datetime.date.today()
-            else:
-                try:
-                    date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
-                except:
-                    date = datetime.date.today()
 
-            if date.weekday():
-                tmpdate = datetime.datetime.combine(date, datetime.time(0,0))
-                tmpdate = tmpdate - datetime.timedelta(days=date.weekday())
-                date = tmpdate
+        if date.weekday():
+            tmpdate = datetime.datetime.combine(date, datetime.time(0,0))
+            tmpdate = tmpdate - datetime.timedelta(days=date.weekday())
+            date = tmpdate
 
-            yield "".join(list(generateSchedulePage(date,type)))
+        yield "".join(list(generateSchedulePage(date,self.type)))
 
-            yield """
-                </div>
-            </body>
-            </html>"""
-        return pg
-    
-    computers = tabbedSchedulePage(computers_id)
-    computers.exposed = True
-    
-    laptops = tabbedSchedulePage(laptops_id)
-    laptops.exposed = True
-    
-    projectors = tabbedSchedulePage(projectors_id)
-    projectors.exposed = True
-    
-    index = computers
+        yield """
+            </div>
+        </body>
+        </html>"""
     index.exposed = True
