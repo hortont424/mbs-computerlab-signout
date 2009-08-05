@@ -40,11 +40,21 @@ def getResourceQuantity(r_id):
     c.execute("select quantity from resources where id=?", (r_id,))
     return c.fetchone()[0]
 
+def getResourceDuration(r_id):
+    c = connect()
+    c.execute("select duration from resources where id=?", (r_id,))
+    return c.fetchone()[0]
+
+def getResourceSlotCount(r_id):
+    c = connect()
+    c.execute("select slot_count from resources where id=?", (r_id,))
+    return c.fetchone()[0]
+
 def loadData(c):
     c.executescript(readFile("sql.txt"))
-    c.execute("insert into resources values (?,?,?,?,?)", (1,"Lab Computers","computers","",25))
-    c.execute("insert into resources values (?,?,?,?,?)", (2,"Laptops","laptops","",20))
-    c.execute("insert into resources values (?,?,?,?,?)", (3,"Projectors","projectors","",2))
+    c.execute("insert into resources values (?,?,?,?,?,?,?)", (1,"Lab Computers","computers","",25,35,9))
+    c.execute("insert into resources values (?,?,?,?,?,?,?)", (2,"Laptops","laptops","",20,185,2))
+    c.execute("insert into resources values (?,?,?,?,?,?,?)", (3,"Projectors","projectors","",2,185,2))
     
     c.execute("insert into teachers values (?,?,?)", (None,"Eaton",""))
     c.execute("insert into teachers values (?,?,?)", (None,"Cheney",""))

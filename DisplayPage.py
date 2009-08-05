@@ -3,17 +3,13 @@
 import datetime
 import db
 
-computers_id = db.getResourceId("Lab Computers")
-laptops_id = db.getResourceId("Laptops")
-projectors_id = db.getResourceId("Projectors")
-
-def generateDaySlots(weekOf, startTime):
+def generateDaySlots(weekOf, startTime, type):
     daySlots = ""
     day = datetime.datetime.combine(weekOf, startTime)
     
     for i in range(0, 5):
-        entries = db.getEntries(day.date(), startTime, computers_id)
-        quantity = db.getResourceQuantity(computers_id)
+        entries = db.getEntries(day.date(), startTime, type)
+        quantity = db.getResourceQuantity(type)
         
         if entries:
             daySlots += "<td class='tFilled'>"
@@ -36,7 +32,7 @@ def generateDaySlots(weekOf, startTime):
     
     return daySlots
 
-def generateComputersPage(weekOf):
+def generateSchedulePage(weekOf,type):
     nextWeek = lastWeek = datetime.datetime.combine(weekOf, datetime.time(0,0))
     
     nextWeek = nextWeek + datetime.timedelta(weeks=1)
@@ -61,9 +57,9 @@ def generateComputersPage(weekOf):
                         "next": "<a href='?date=" + nextWeekStr + u"'>→</a>"}
     
     startTime = datetime.datetime.combine(weekOf, datetime.time(8,45))
-    endTime = startTime + datetime.timedelta(minutes=35)
+    endTime = startTime + datetime.timedelta(minutes=db.getResourceDuration(type))
     
-    for i in range(0,9):
+    for i in range(0,db.getResourceSlotCount(type)):
         yield """
         <tr>
             <td class="tTime">%(startTime)s - %(endTime)s</td>
@@ -71,10 +67,10 @@ def generateComputersPage(weekOf):
         </tr>
         """ % {"startTime": startTime.strftime("%I:%M"),
                "endTime": endTime.strftime("%I:%M"),
-               "daySlots": generateDaySlots(weekOf, startTime.time())}
+               "daySlots": generateDaySlots(weekOf, startTime.time(), type)}
         
-        startTime = startTime + datetime.timedelta(minutes=40)
-        endTime = endTime + datetime.timedelta(minutes=40)
+        startTime = startTime + datetime.timedelta(minutes=db.getResourceDuration(type)+5)
+        endTime = endTime + datetime.timedelta(minutes=db.getResourceDuration(type)+5)
 
 def generateTabs():
     t = "<ul id='tabnav'>"
@@ -87,6 +83,10 @@ def generateTabs():
     return t
 
 class DisplayPage:
+    computers_id = db.getResourceId("Lab Computers")
+    laptops_id = db.getResourceId("Laptops")
+    projectors_id = db.getResourceId("Projectors")
+    
     def tabbedSchedulePage(type):
         def pg(self, date=None):
             yield """
@@ -125,7 +125,7 @@ class DisplayPage:
                 tmpdate = tmpdate - datetime.timedelta(days=date.weekday())
                 date = tmpdate
 
-            yield "".join(list(generateComputersPage(date)))
+            yield "".join(list(generateSchedulePage(date,type)))
 
             yield """
                 </div>

@@ -9,7 +9,9 @@ CREATE TABLE "resources" (
     "name" varchar(256) NOT NULL,
     "slug" varchar(256) NOT NULL,
     "comment" text NOT NULL,
-    "quantity" integer unsigned NOT NULL
+    "quantity" integer unsigned NOT NULL,
+    "duration" integer unsigned NOT NULL,
+	"slot_count" integer unsigned NOT NULL
 );
 CREATE TABLE "entries" (
     "id" integer NOT NULL PRIMARY KEY,
