@@ -58,7 +58,7 @@ class signoutPage:
             	</div>
         	</form>
         	<a href="#"><div id="signoutButton">
-        		<img src="/static/play.tiff" valign="top"/> Continue to time slot selection
+        		<img src="/static/play.png" valign="top"/> Continue to time slot selection
         	</div></a>
     	</body>
         </html>
@@ -104,7 +104,7 @@ class signoutPage:
         		</div>
         	</div>
         	<a href="#"><div id="signoutButton">
-        		<img src="/static/play.tiff" valign="top"/> Done
+        		<img src="/static/play.png" valign="top"/> Done
         	</div></a>
             <div id="schedule">""" % {
                 "id": self.type,

@@ -102,7 +102,7 @@ class tabbedSchedulePage:
                 %(tabs)s
             </div>
             <a href="/%(slug)s/signout"><div id="signoutButton">
-                <img src="/static/add.tiff" valign="top"/> Sign out %(slug)s
+                <img src="/static/add.png" valign="top"/> Sign out %(slug)s
             </div></a>
             <div id="schedule">""" % {
                 "id": self.type,
