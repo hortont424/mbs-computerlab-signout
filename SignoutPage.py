@@ -4,16 +4,24 @@ import datetime
 import db
 
 def generateTeachersDropdown():
-    yield "<select style='font-size: 1em'>"
+    yield "<select name='teacher'>"
     
-    teachers = db.getTeachers()
+    yield "<optgroup label='3rd Grade'>"
     
-    for t in teachers:
-        yield "<option name='%(id)d'>%(name)s</option>" % {
-            "id": t[0],
-            "name": t[1] }
+    for t in ("Jamison", "Miles", "Barnes", "Schroeder", "Bonfigli", "Rayner", "Eaton", "Fitzpatrick"):
+        yield "<option name='%(name)s'>%(name)s</option>" % { "name": t }
     
-    yield "</select>"
+    yield "</optgroup><optgroup label='4th Grade'>"
+    
+    for t in ("Chittenden", "Longchamp", "Gallas", "Boucher", "Hunt", "Cheney", "Kilmer"):
+        yield "<option name='%(name)s'>%(name)s</option>" % { "name": t }
+    
+    yield "</optgroup><optgroup label='5th Grade'>"
+    
+    for t in ("Buswell", "Galati", "Renner", "Rogers", "Bryer", "Winchester", "DiGrande", "Powsner"):
+        yield "<option name='%(name)s'>%(name)s</option>" % { "name": t }
+    
+    yield "</optgroup><optgroup label='Misc.'><option name='Other'>Other</option></optgroup></select>"
 
 class signoutPage:
     def __init__(self, t):
@@ -52,12 +60,13 @@ class signoutPage:
             <div id="headerButton">
         		Signing out %(slug)s
         	</div>
-        	<form id="signinForm">
-            	<div class="headerButton" style="text-align: left;">
-            		Name: %(teachers)s
+        	<form id="signinForm" name="signinForm" action="choose">
+            	<div class="headerButtonSmall" style="text-align: left;">
+            		Name: %(teachers)s<br/><br/>
+            		Password: <input type="password"/>
             	</div>
         	</form>
-        	<a href="#"><div id="signoutButton">
+        	<a href="javascript:document.signinForm.submit()"><div id="signoutButton">
         		<img src="/static/play.png" valign="top"/> Continue to time slot selection
         	</div></a>
     	</body>
@@ -71,7 +80,7 @@ class signoutPage:
 
     index.exposed = True
         
-    def choose(self, date=None):
+    def choose(self, date=None, teacher=None):
         yield """
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
             "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

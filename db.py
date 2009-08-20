@@ -76,22 +76,25 @@ def loadData(c):
     c.execute("insert into teachers values (?,?,?)", (None,"Fitzpatrick",""))
     
     c_id = 1
-    cheney_id = getTeacherId("Cheney")
-    eaton_id = getTeacherId("Eaton")
+    cheney_id = 3
+    eaton_id = 4
     c.execute("insert into entries values (?,?,?,?,?,?,?,?)",
-        (None, "2009-08-05", "08:45", "09:20", "", 5, c_id, eaton_id))
+        (None, "2009-08-18", "08:45", "09:20", "", 5, c_id, eaton_id))
     c.execute("insert into entries values (?,?,?,?,?,?,?,?)",
-        (None, "2009-08-06", "08:45", "09:20", "", 5, c_id, eaton_id))
+        (None, "2009-08-19", "08:45", "09:20", "", 5, c_id, eaton_id))
     c.execute("insert into entries values (?,?,?,?,?,?,?,?)",
-        (None, "2009-08-07", "08:45", "09:20", "", 5, c_id, eaton_id))
+        (None, "2009-08-20", "08:45", "09:20", "", 5, c_id, eaton_id))
     c.execute("insert into entries values (?,?,?,?,?,?,?,?)",
-        (None, "2009-08-05", "09:25", "10:00", "", 15, c_id, cheney_id))
+        (None, "2009-08-18", "09:25", "10:00", "", 15, c_id, cheney_id))
     c.execute("insert into entries values (?,?,?,?,?,?,?,?)",
-        (None, "2009-08-05", "09:25", "10:00", "", 5, c_id, eaton_id))
+        (None, "2009-08-18", "09:25", "10:00", "", 5, c_id, eaton_id))
 
 def connect():
     db = sqlite3.connect('signout.db')
     c = db.cursor()
-    #loadData(c)
-    #db.commit()
     return c
+
+#db = sqlite3.connect('signout.db')
+#c = db.cursor()
+#loadData(c)
+#db.commit()

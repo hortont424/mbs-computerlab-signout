@@ -166,6 +166,15 @@ div.signoutEntry
 	text-align: center;
 }
 
+#headerButtonSmall, div.headerButtonSmall
+{
+	margin: 20px 15%;
+	padding: 15px;
+	background-color: #99bde3;
+	border: 2px solid #204a87;
+	text-align: center;
+}
+
 #headerButtonSub
 {
 	font-size: .6em;
