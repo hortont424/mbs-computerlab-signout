@@ -4,24 +4,24 @@ import datetime
 import db
 
 def generateTeachersDropdown():
-    yield "<select name='teacher'>"
-    
+    yield "<select name='teacher' onchange='changedNameSelection()' id='teacher'>"
+    yield "<option></option>"
     yield "<optgroup label='3rd Grade'>"
     
-    for t in ("Jamison", "Miles", "Barnes", "Schroeder", "Bonfigli", "Rayner", "Eaton", "Fitzpatrick"):
+    for t in ("Barnes", "Bonfigli", "Eaton", "Fitzpatrick", "Jamison", "Miles", "Rayner", "Schroeder"):
         yield "<option name='%(name)s'>%(name)s</option>" % { "name": t }
     
     yield "</optgroup><optgroup label='4th Grade'>"
     
-    for t in ("Chittenden", "Longchamp", "Gallas", "Boucher", "Hunt", "Cheney", "Kilmer"):
+    for t in ("Boucher", "Cheney", "Chittenden", "Gallas", "Hunt", "Kilmer", "Longchamp"):
         yield "<option name='%(name)s'>%(name)s</option>" % { "name": t }
     
     yield "</optgroup><optgroup label='5th Grade'>"
     
-    for t in ("Buswell", "Galati", "Renner", "Rogers", "Bryer", "Winchester", "DiGrande", "Powsner"):
+    for t in ("Bryer", "Buswell", "DiGrande", "Galati", "Powsner", "Renner", "Rogers", "Winchester"):
         yield "<option name='%(name)s'>%(name)s</option>" % { "name": t }
     
-    yield "</optgroup><optgroup label='Misc.'><option name='Other'>Other</option></optgroup></select>"
+    yield "</optgroup><optgroup label='Misc.'><option name='Special Ed.'>Special Ed.</option><option name='Other'>Other</option></optgroup></select>"
 
 class signoutPage:
     def __init__(self, t):
@@ -51,25 +51,59 @@ class signoutPage:
             {
                 text-align: left;
             }
+            
+            td
+            {
+                border: 0px;
+            }
             </style>
+            <script src="/static/jquery.min.js"></script>
+            <script>
+            function updateOtherField(sel)
+            {
+                var ot = $("#otherText");
+                
+                if($("#teacher")[0].value == "Other")
+                    ot.css("display", "table-row");
+                else
+                    ot.css("display", "none");
+            }
+
+            function changedNameSelection(sel)
+            {
+                updateOtherField(sel);
+            }
+            </script>
         </head>
         <body>
             <div id="header">
                 <a href="/"><img src="/static/signout-logo.png" id="logo"/></a>
             </div>
             <div id="headerButton">
-        		Signing out %(slug)s
-        	</div>
-        	<form id="signinForm" name="signinForm" action="choose">
-            	<div class="headerButtonSmall" style="text-align: left;">
-            		Name: %(teachers)s<br/><br/>
-            		Password: <input type="password"/>
-            	</div>
-        	</form>
-        	<a href="javascript:document.signinForm.submit()"><div id="signoutButton">
-        		<img src="/static/play.png" valign="top"/> Continue to time slot selection
-        	</div></a>
-    	</body>
+                Signing out %(slug)s
+            </div>
+            <form id="signinForm" name="signinForm" action="choose">
+                <div class="headerButtonSmall" style="text-align: left;">
+                    <table border="0px" cellpadding="6px" width="100%%">
+                    <tr>
+                        <td style="text-align: right;"><b>Name:</b></td>
+                        <td>%(teachers)s</td>
+                    </tr>
+                    <tr id="otherText" style="display: none;">
+                        <td style="text-align: right;"><b>Other:</b></td>
+                        <td><input type="text"/></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: right;"><b>Password:</b></td>
+                        <td><input type="password"/></td>
+                    </tr>
+                    </table>
+                </div>
+            </form>
+            <a href="javascript:document.signinForm.submit()"><div id="signoutButton">
+                <img src="/static/play.png" valign="top"/> Continue to time slot selection
+            </div></a>
+        </body>
         </html>
             """ % {
                 "id": self.type,
@@ -106,15 +140,15 @@ class signoutPage:
                 <a href="/"><img src="/static/signout-logo.png" id="logo"/></a>
             </div>
             <div id="headerButton">
-        		Signing out %(slug)s
-        		<div id="headerButtonSub">
-        			The number of remaining seats in each time slot is indicated below. Click on a time slot to change the number of seats <em>you</em> need. When you are done, click the button below to continue.<br/><br/>
-        			Each slot has %(q)d %(slug)s available unless otherwise noted.
-        		</div>
-        	</div>
-        	<a href="#"><div id="signoutButton">
-        		<img src="/static/play.png" valign="top"/> Done
-        	</div></a>
+                Signing out %(slug)s
+                <div id="headerButtonSub">
+                    The number of remaining seats in each time slot is indicated below. Click on a time slot to change the number of seats <em>you</em> need. When you are done, click the button below to continue.<br/><br/>
+                    Each slot has %(q)d %(slug)s available unless otherwise noted.
+                </div>
+            </div>
+            <a href="#"><div id="signoutButton">
+                <img src="/static/play.png" valign="top"/> Done
+            </div></a>
             <div id="schedule">""" % {
                 "id": self.type,
                 "name": db.getResourceName(self.type),
