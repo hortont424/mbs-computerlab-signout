@@ -2,6 +2,7 @@
 
 import datetime
 import db
+import utils
 
 def generateDaySlots(weekOf, startTime, type):
     daySlots = ""
@@ -87,6 +88,8 @@ class tabbedSchedulePage:
         self.type = t
         
     def index(self, date=None):
+        date = utils.normalizeDate(date)
+        
         src = """
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
             "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -101,27 +104,16 @@ class tabbedSchedulePage:
                 <a href="/"><img src="/static/signout-logo.png" id="logo"/></a>
                 %(tabs)s
             </div>
-            <a href="/%(slug)s/signout"><div id="signoutButton">
+            <form id="signoutForm" name="signoutForm" action="/%(slug)s/signout" method="get"><input type='hidden' name='date' value='%(date)s'></form>
+            <a href="javascript:document.signoutForm.submit()"><div id="signoutButton">
                 <img src="/static/add.png" valign="top"/> Sign out %(slug)s
             </div></a>
             <div id="schedule">""" % {
                 "id": self.type,
                 "name": db.getResourceName(self.type),
                 "slug": db.getResourceSlug(self.type),
-                "tabs": generateTabs() }
-
-        if date is None:
-            date = datetime.date.today()
-        else:
-            try:
-                date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
-            except:
-                date = datetime.date.today()
-
-        if date.weekday():
-            tmpdate = datetime.datetime.combine(date, datetime.time(0,0))
-            tmpdate = tmpdate - datetime.timedelta(days=date.weekday())
-            date = tmpdate
+                "tabs": generateTabs(),
+                "date": date }
 
         src += "".join(list(generateSchedulePage(date,self.type)))
 

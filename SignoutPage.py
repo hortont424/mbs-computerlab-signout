@@ -3,6 +3,7 @@
 import datetime
 import db
 import hashlib
+import utils
 
 password_hash = "1169352c31919b66930b14c0375cd34f"
 
@@ -31,6 +32,9 @@ class signoutPage:
         self.type = t
     
     def index(self, date=None):
+        print date
+        date = utils.normalizeDate(date)
+        
         yield """
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
             "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -108,6 +112,7 @@ class signoutPage:
                 Signing out %(slug)s
             </div>
             <form id="signinForm" name="signinForm" action="choose" method="post">
+                <input type='hidden' name='date' value='%(date)s'>
                 <div class="headerButtonSmall" style="text-align: left;">
                     <table border="0px" cellpadding="6px" width="100%%">
                     <tr>
@@ -136,11 +141,14 @@ class signoutPage:
                 "slug": db.getResourceSlug(self.type),
                 "q": db.getResourceQuantity(self.type),
                 "teachers": "".join(list(generateTeachersDropdown())),
-                "pw": password_hash }
+                "pw": password_hash,
+                "date": date }
 
     index.exposed = True
         
     def choose(self, date=None, teacher=None, passwd=None, other=None):
+        date = utils.normalizeDate(date)
+        
         if passwd == None or teacher == None:
             yield """
             <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -151,7 +159,6 @@ class signoutPage:
         
         m = hashlib.md5()
         m.update(passwd);
-        print m.hexdigest()
         if(m.hexdigest() != password_hash):
             yield """
             <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -188,7 +195,7 @@ class signoutPage:
                 Signing out %(slug)s<br/><small><small>as "%(name)s"</small></small>
                 <div id="headerButtonSub">
                     The number of remaining seats in each time slot is indicated below. Click on a time slot to change the number of seats <em>you</em> need. When you are done, click the button below to continue.<br/><br/>
-                    Each slot has %(q)d %(slug)s available unless otherwise noted.
+                    Each slot has %(q)d %(slug)s available unless otherwise noted. %(date)s
                 </div>
             </div>
             <a href="#"><div id="signoutButton">
@@ -199,7 +206,8 @@ class signoutPage:
                 "name": db.getResourceName(self.type),
                 "slug": db.getResourceSlug(self.type),
                 "q": db.getResourceQuantity(self.type),
-                "name": teacher }
+                "name": teacher,
+                "date": date }
 
         if date is None:
             date = datetime.date.today()
