@@ -2,6 +2,9 @@
 
 import datetime
 import db
+import hashlib
+
+password_hash = "1169352c31919b66930b14c0375cd34f"
 
 def generateTeachersDropdown():
     yield "<select name='teacher' onchange='changedNameSelection()' id='teacher'>"
@@ -75,11 +78,11 @@ class signoutPage:
                 var signout = $("#signoutButton");
                 var teacher = $("#teacher")[0].value;
                 var ot = $("#otherText")[0].value;
-                var password = $("#pass")[0].value;
+                var password = $("#passwd")[0].value;
                 
                 if(((teacher == "Other" && ot != "") ||
                     (teacher != "Other" && teacher != "")) &&
-                   ($.md5(password) == "1169352c31919b66930b14c0375cd34f"))
+                   ($.md5(password) == "%(pw)s"))
                     signout.css("display", "block");
                 else
                     signout.css("display", "none");
@@ -104,7 +107,7 @@ class signoutPage:
             <div id="headerButton">
                 Signing out %(slug)s
             </div>
-            <form id="signinForm" name="signinForm" action="choose">
+            <form id="signinForm" name="signinForm" action="choose" method="post">
                 <div class="headerButtonSmall" style="text-align: left;">
                     <table border="0px" cellpadding="6px" width="100%%">
                     <tr>
@@ -113,11 +116,11 @@ class signoutPage:
                     </tr>
                     <tr id="otherText" style="display: none;">
                         <td style="text-align: right;"><b>Other:</b></td>
-                        <td><input type="text"/></td>
+                        <td><input type="text" name="other"/></td>
                     </tr>
                     <tr>
                         <td style="text-align: right;"><b>Password:</b></td>
-                        <td><input type="password" id="pass" name="pass" onchange='changedPassword()' onkeyup='changedPassword()' /></td>
+                        <td><input type="password" id="passwd" name="passwd" onchange='changedPassword()' onkeyup='changedPassword()' /></td>
                     </tr>
                     </table>
                 </div>
@@ -132,11 +135,31 @@ class signoutPage:
                 "name": db.getResourceName(self.type),
                 "slug": db.getResourceSlug(self.type),
                 "q": db.getResourceQuantity(self.type),
-                "teachers": "".join(list(generateTeachersDropdown())) }
+                "teachers": "".join(list(generateTeachersDropdown())),
+                "pw": password_hash }
 
     index.exposed = True
         
-    def choose(self, date=None, teacher=None):
+    def choose(self, date=None, teacher=None, passwd=None, other=None):
+        if passwd == None or teacher == None:
+            yield """
+            <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+            <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+            Missing data! Go back and try again...</html>"""
+            return
+        
+        m = hashlib.md5()
+        m.update(passwd);
+        print m.hexdigest()
+        if(m.hexdigest() != password_hash):
+            yield """
+            <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+            <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+            Wrong password! Go back and try again...</html>"""
+            return
+        
         yield """
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
             "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -162,7 +185,7 @@ class signoutPage:
                 <a href="/"><img src="/static/signout-logo.png" id="logo"/></a>
             </div>
             <div id="headerButton">
-                Signing out %(slug)s
+                Signing out %(slug)s<br/><small><small>as "%(name)s"</small></small>
                 <div id="headerButtonSub">
                     The number of remaining seats in each time slot is indicated below. Click on a time slot to change the number of seats <em>you</em> need. When you are done, click the button below to continue.<br/><br/>
                     Each slot has %(q)d %(slug)s available unless otherwise noted.
@@ -175,7 +198,8 @@ class signoutPage:
                 "id": self.type,
                 "name": db.getResourceName(self.type),
                 "slug": db.getResourceSlug(self.type),
-                "q": db.getResourceQuantity(self.type) }
+                "q": db.getResourceQuantity(self.type),
+                "name": teacher }
 
         if date is None:
             date = datetime.date.today()
