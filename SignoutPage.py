@@ -58,8 +58,9 @@ class signoutPage:
             }
             </style>
             <script src="/static/jquery.min.js"></script>
+            <script src="/static/jquery.md5.js"></script>
             <script>
-            function updateOtherField(sel)
+            function updateOtherField()
             {
                 var ot = $("#otherText");
                 
@@ -68,10 +69,31 @@ class signoutPage:
                 else
                     ot.css("display", "none");
             }
-
-            function changedNameSelection(sel)
+            
+            function updateContinuable()
             {
-                updateOtherField(sel);
+                var signout = $("#signoutButton");
+                var teacher = $("#teacher")[0].value;
+                var ot = $("#otherText")[0].value;
+                var password = $("#pass")[0].value;
+                
+                if(((teacher == "Other" && ot != "") ||
+                    (teacher != "Other" && teacher != "")) &&
+                   ($.md5(password) == "1169352c31919b66930b14c0375cd34f"))
+                    signout.css("display", "block");
+                else
+                    signout.css("display", "none");
+            }
+
+            function changedNameSelection()
+            {
+                updateOtherField();
+                updateContinuable();
+            }
+            
+            function changedPassword()
+            {
+                updateContinuable();
             }
             </script>
         </head>
@@ -95,12 +117,12 @@ class signoutPage:
                     </tr>
                     <tr>
                         <td style="text-align: right;"><b>Password:</b></td>
-                        <td><input type="password"/></td>
+                        <td><input type="password" id="pass" name="pass" onchange='changedPassword()' onkeyup='changedPassword()' /></td>
                     </tr>
                     </table>
                 </div>
             </form>
-            <a href="javascript:document.signinForm.submit()"><div id="signoutButton">
+            <a href="javascript:document.signinForm.submit()"><div id="signoutButton" style="display: none;">
                 <img src="/static/play.png" valign="top"/> Continue to time slot selection
             </div></a>
         </body>
