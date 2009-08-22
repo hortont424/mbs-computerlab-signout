@@ -35,6 +35,10 @@ def authLogin(id,passwd):
     cherrypy.session["loggedIn"] = passwd
     return True
 
+def authLogout():
+    cherrypy.session["id"] = None
+    cherrypy.session["loggedIn"] = None
+
 def authGetLoggedIn():
     if authGetID() is not None and cherrypy.session.get("loggedIn") is not None:
         return True

@@ -224,15 +224,24 @@ class signoutPage:
 
     index.exposed = True
         
-    def choose(self, date=None, teacher=None, passwd=None, other=None, time=None, signout=None, day=None):
+    def choose(self, date=None, teacher=None, passwd=None, other=None, time=None, signout=None, day=None, logout=None):
         date = utils.normalizeDate(date)
+        
+        if logout is not None:
+            authLogout()
+            yield """
+            <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+            <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+            <script>window.location='/'</script></html>"""
+            return
         
         if (passwd == None or teacher == None) and not authGetLoggedIn():
             yield """
             <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
                 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
             <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-            Missing data! Go back and try again...</html>"""
+            <script>window.location='/'</script></html>"""
             return
         
         if (passwd != None and teacher != None) and not authLogin(teacher, passwd):
@@ -248,7 +257,7 @@ class signoutPage:
             <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
                 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
             <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-            Something broke! Go back and try again...</html>"""
+            <script>window.location='/'</script></html>"""
             return
         
         teacher = authGetID()
@@ -326,7 +335,7 @@ class signoutPage:
                     Each slot has %(q)d %(slug)s available unless otherwise noted.
                 </div>
             </div>
-            <a href="#"><div id="signoutButton">
+            <a href="?logout=1"><div id="signoutButton">
                 <img src="/static/play.png" valign="top"/> Done
             </div></a>
             <div id="schedule">""" % {
