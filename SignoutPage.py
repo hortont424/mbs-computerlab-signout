@@ -254,7 +254,6 @@ class signoutPage:
         teacher = authGetID()
         
         if signout is not None:
-            print "sign out computers..."
             db.setEntry(day,time,self.type,db.getTeacherId(teacher),signout)
             yield """
             <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"

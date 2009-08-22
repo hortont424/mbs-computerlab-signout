@@ -15,15 +15,11 @@ def getEntries(day,time,type):
 def setEntry(day,time,type,t_id,num):
     db = sqlite3.connect('signout.db')
     c = db.cursor()
-    print "deleting"
-    print day
-    print time
-    print type
-    print t_id
-    print c.execute("delete from entries where day=? and start_time=? and signee_id=? and signer_id=?",
-              (day, time, type, t_id)).rowcount
-    c.execute("insert into entries values (?,?,?,?,?,?,?,?)",
-        (None, day, time, time, "", num, type, t_id))
+    c.execute("delete from entries where day=? and start_time=? and signee_id=? and signer_id=?",
+              (day, time, type, t_id))
+    if int(num) > 0:
+        c.execute("insert into entries values (?,?,?,?,?,?,?,?)",
+                  (None, day, time, time, "", num, type, t_id))
     db.commit()
 
 def getTeachers():
@@ -82,12 +78,14 @@ def loadData(c):
     c.execute("insert into resources values (?,?,?,?,?,?,?)", (2,"Laptops","laptops","",20,185,2))
     c.execute("insert into resources values (?,?,?,?,?,?,?)", (3,"Projectors","projectors","",2,185,2))
     
-    c.execute("insert into teachers values (?,?,?)", (None,"Eaton",""))
-    c.execute("insert into teachers values (?,?,?)", (None,"Cheney",""))
-    c.execute("insert into teachers values (?,?,?)", (None,"DiGrande",""))
-    c.execute("insert into teachers values (?,?,?)", (None,"Powsner",""))
-    c.execute("insert into teachers values (?,?,?)", (None,"Kilmer",""))
-    c.execute("insert into teachers values (?,?,?)", (None,"Fitzpatrick",""))
+    for t in ("Barnes", "Bonfigli", "Eaton", "Fitzpatrick", "Jamison", "Miles", "Rayner", "Schroeder"):
+        c.execute("insert into teachers values (?,?,?)", (None,t,""))
+    for t in ("Boucher", "Cheney", "Chittenden", "Gallas", "Hunt", "Kilmer", "Longchamp"):
+        c.execute("insert into teachers values (?,?,?)", (None,t,""))
+    for t in ("Bryer", "Buswell", "DiGrande", "Galati", "Powsner", "Renner", "Rogers", "Winchester"):
+        c.execute("insert into teachers values (?,?,?)", (None,t,""))
+    for t in ("Special Ed.", "Other"):
+        c.execute("insert into teachers values (?,?,?)", (None,t,""))
     
     c_id = 1
     cheney_id = 3
