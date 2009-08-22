@@ -276,14 +276,33 @@ class signoutPage:
             <script>
             function signout(name, currentQ, leftQ, date, time)
             {
-                var moreStr = ""
+                var moreStr = "";
                 
                 if(currentQ != 0)
-                    moreStr = "(" + leftQ + " more) "
+                    moreStr = "(" + leftQ + " more) ";
                 
-                prompt("You currently have " + currentQ +
-                       " %(slug)s signed out for " + time + " on " + date + ".\\n\\n" +
-                       "You can sign out up to " + (currentQ + leftQ) + " %(slug)s " + moreStr + "in that slot:\\n", currentQ)
+                res = prompt("You currently have " + currentQ +
+                             " %(slug)s signed out for " + time + " on " + date + ".\\n\\n" +
+                             "You can sign out up to " + (currentQ + leftQ) + " %(slug)s " + moreStr + "in that slot:\\n", currentQ);
+                
+                if(res == null)
+                    return;
+                
+                if(isNaN(res))
+                {
+                    alert("'" + res + "' is not a number between 0 and (currentQ + leftQ). Please try again.");
+                    signout(name, currentQ, leftQ, date, time);
+                    return;
+                }
+                
+                if(res > (currentQ + leftQ))
+                {
+                    alert("You requested " + (res - currentQ) + " additional %(slug)s. However, there are only " + leftQ + " available. Please try again.");
+                    signout(name, currentQ, leftQ, date, time);
+                    return;
+                }
+                
+                alert("got " + res)
             }
             </script>
         </head>
