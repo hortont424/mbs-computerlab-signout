@@ -2,6 +2,7 @@
 
 import codecs
 import datetime
+from Authenticate import *
 
 def readFile(fn):
     fileHandle = codecs.open(fn, encoding='utf-8')
@@ -11,7 +12,9 @@ def readFile(fn):
 
 def normalizeDate(date):
     if date is None:
-        date = datetime.date.today()
+        date = authGetDate()
+        if date is None:
+            date = datetime.date.today()
     else:
         try:
             date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
@@ -22,4 +25,7 @@ def normalizeDate(date):
         tmpdate = datetime.datetime.combine(date, datetime.time(0,0))
         tmpdate = tmpdate - datetime.timedelta(days=date.weekday())
         date = tmpdate
+    
+    authSetDate(date)
+    
     return date

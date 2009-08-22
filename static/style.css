@@ -127,6 +127,10 @@ td.tSignout
 {
 	background-color: #cdeb8b;
 	border-color: #4e9a06;
+}
+
+td.ts
+{
 	cursor: pointer;
 	cursor: hand;
 }

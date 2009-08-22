@@ -2,10 +2,91 @@
 
 import datetime
 import db
-import hashlib
 import utils
+from Authenticate import *
 
-password_hash = "1169352c31919b66930b14c0375cd34f"
+def generateSignoutDaySlots(weekOf, startTime, type):
+    daySlots = ""
+    day = datetime.datetime.combine(weekOf, startTime)
+    currentUser = authGetID()
+    
+    for i in range(0, 5):
+        entries = db.getEntries(day.date(), startTime, type)
+        quantity = db.getResourceQuantity(type)
+        currentUserInBox = 0
+        
+        for entry in entries:
+            if db.getTeacherName(entry[7]) == currentUser:
+                currentUserInBox = entry[5]
+        
+        if entries:
+            if currentUserInBox:
+                daySlots += "<td class='tFilled tSignout ts' "
+            else:
+                daySlots += "<td class='tFilled ts' "
+        else:
+            daySlots += "<td class='ts' "
+        
+        daySlots += " onclick='signout(\"" + currentUser + "\"," + str(currentUserInBox) + ", \"" + weekOf.strftime("%Y-%m-%d") + "\",\"" + startTime.strftime("%I:%M") + "\")'>"
+        
+        for entry in entries:
+            if db.getTeacherName(entry[7]) == currentUser:
+                daySlots += "<div class='signoutEntry'>"
+            else:
+                daySlots += "<div class='entry'>"
+            daySlots += db.getTeacherName(entry[7])
+            daySlots += " (%(q)d)" % {"q": entry[5]}
+            daySlots += "</div>"
+            quantity -= entry[5]
+        
+        if entries:
+            daySlots += "<div class='leftEntryAfter'>%(q)d left</div>" % {"q": quantity}
+        
+        daySlots += "</td>"
+        
+        day = day + datetime.timedelta(days=1)
+    
+    return daySlots
+
+def generateSignoutSchedulePage(weekOf,type):
+    nextWeek = lastWeek = datetime.datetime.combine(weekOf, datetime.time(0,0))
+    
+    nextWeek = nextWeek + datetime.timedelta(weeks=1)
+    nextWeekStr = nextWeek.strftime("%Y-%m-%d")
+    
+    lastWeek = lastWeek - datetime.timedelta(weeks=1)
+    lastWeekStr = lastWeek.strftime("%Y-%m-%d")
+    
+    yield u"""
+    <div id="schedule">
+        <div id="scheduleHeader">%(last)s Schedule for week of %(week)s %(next)s</div>
+        <table id="scheduleTable" cellpadding="0px" cellspacing="4px">
+            <tr>
+                <td class="tHide"></td>
+                <td class="tHeader">Monday</td>
+                <td class="tHeader">Tuesday</td>
+                <td class="tHeader">Wednesday</td>
+                <td class="tHeader">Thursday</td>
+                <td class="tHeader">Friday</td>
+            </tr>""" % {"week": weekOf.strftime("%B %d, %Y"),
+                        "last": "<a href='?date=" + lastWeekStr + u"'>←</a>",
+                        "next": "<a href='?date=" + nextWeekStr + u"'>→</a>"}
+    
+    startTime = datetime.datetime.combine(weekOf, datetime.time(8,45))
+    endTime = startTime + datetime.timedelta(minutes=db.getResourceDuration(type))
+    
+    for i in range(0,db.getResourceSlotCount(type)):
+        yield """
+        <tr>
+            <td class="tTime">%(startTime)s - %(endTime)s</td>
+            %(daySlots)s
+        </tr>
+        """ % {"startTime": startTime.strftime("%I:%M"),
+               "endTime": endTime.strftime("%I:%M"),
+               "daySlots": generateSignoutDaySlots(weekOf, startTime.time(), type)}
+        
+        startTime = startTime + datetime.timedelta(minutes=db.getResourceDuration(type)+5)
+        endTime = endTime + datetime.timedelta(minutes=db.getResourceDuration(type)+5)
 
 def generateTeachersDropdown():
     yield "<select name='teacher' onchange='changedNameSelection()' id='teacher'>"
@@ -32,7 +113,6 @@ class signoutPage:
         self.type = t
     
     def index(self, date=None):
-        print date
         date = utils.normalizeDate(date)
         
         yield """
@@ -112,7 +192,6 @@ class signoutPage:
                 Signing out %(slug)s
             </div>
             <form id="signinForm" name="signinForm" action="choose" method="post">
-                <input type='hidden' name='date' value='%(date)s'>
                 <div class="headerButtonSmall" style="text-align: left;">
                     <table border="0px" cellpadding="6px" width="100%%">
                     <tr>
@@ -141,15 +220,14 @@ class signoutPage:
                 "slug": db.getResourceSlug(self.type),
                 "q": db.getResourceQuantity(self.type),
                 "teachers": "".join(list(generateTeachersDropdown())),
-                "pw": password_hash,
-                "date": date }
+                "pw": password_hash }
 
     index.exposed = True
         
     def choose(self, date=None, teacher=None, passwd=None, other=None):
         date = utils.normalizeDate(date)
         
-        if passwd == None or teacher == None:
+        if (passwd == None or teacher == None) and not authGetLoggedIn():
             yield """
             <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
                 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -157,15 +235,23 @@ class signoutPage:
             Missing data! Go back and try again...</html>"""
             return
         
-        m = hashlib.md5()
-        m.update(passwd);
-        if(m.hexdigest() != password_hash):
+        if (passwd != None and teacher != None) and not authLogin(teacher, passwd):
             yield """
             <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
                 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
             <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
             Wrong password! Go back and try again...</html>"""
             return
+        
+        if not authGetLoggedIn():
+            yield """
+            <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+            <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+            Something broke! Go back and try again...</html>"""
+            return
+        
+        teacher = authGetID()
         
         yield """
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -195,7 +281,7 @@ class signoutPage:
                 Signing out %(slug)s<br/><small><small>as "%(name)s"</small></small>
                 <div id="headerButtonSub">
                     The number of remaining seats in each time slot is indicated below. Click on a time slot to change the number of seats <em>you</em> need. When you are done, click the button below to continue.<br/><br/>
-                    Each slot has %(q)d %(slug)s available unless otherwise noted. %(date)s
+                    Each slot has %(q)d %(slug)s available unless otherwise noted.
                 </div>
             </div>
             <a href="#"><div id="signoutButton">
@@ -206,24 +292,9 @@ class signoutPage:
                 "name": db.getResourceName(self.type),
                 "slug": db.getResourceSlug(self.type),
                 "q": db.getResourceQuantity(self.type),
-                "name": teacher,
-                "date": date }
+                "name": teacher }
 
-        if date is None:
-            date = datetime.date.today()
-        else:
-            try:
-                date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
-            except:
-                date = datetime.date.today()
-
-        if date.weekday():
-            tmpdate = datetime.datetime.combine(date, datetime.time(0,0))
-            tmpdate = tmpdate - datetime.timedelta(days=date.weekday())
-            date = tmpdate
-
-        #yield "".join(list(generateSchedulePage(date,self.type)))
-        yield "ohi!!"
+        yield "".join(list(generateSignoutSchedulePage(date,self.type)))
 
         yield """
             </div>

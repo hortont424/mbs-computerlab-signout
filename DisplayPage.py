@@ -3,6 +3,7 @@
 import datetime
 import db
 import utils
+from Authenticate import *
 
 def generateDaySlots(weekOf, startTime, type):
     daySlots = ""
@@ -104,8 +105,7 @@ class tabbedSchedulePage:
                 <a href="/"><img src="/static/signout-logo.png" id="logo"/></a>
                 %(tabs)s
             </div>
-            <form id="signoutForm" name="signoutForm" action="/%(slug)s/signout" method="get"><input type='hidden' name='date' value='%(date)s'></form>
-            <a href="javascript:document.signoutForm.submit()"><div id="signoutButton">
+            <a href="/%(slug)s/signout"><div id="signoutButton">
                 <img src="/static/add.png" valign="top"/> Sign out %(slug)s
             </div></a>
             <div id="schedule">""" % {
