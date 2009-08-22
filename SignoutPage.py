@@ -224,7 +224,7 @@ class signoutPage:
 
     index.exposed = True
         
-    def choose(self, date=None, teacher=None, passwd=None, other=None):
+    def choose(self, date=None, teacher=None, passwd=None, other=None, time=None, signout=None, day=None):
         date = utils.normalizeDate(date)
         
         if (passwd == None or teacher == None) and not authGetLoggedIn():
@@ -252,6 +252,16 @@ class signoutPage:
             return
         
         teacher = authGetID()
+        
+        if signout is not None:
+            print "sign out computers..."
+            db.setEntry(day,time,self.type,db.getTeacherId(teacher),signout)
+            yield """
+            <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+            <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+            <script>window.location='?'</script></html>"""
+            return
         
         yield """
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -302,7 +312,7 @@ class signoutPage:
                     return;
                 }
                 
-                alert("got " + res)
+                window.location = "?signout=" + res + ";day=" + date + ";time=" + time;
             }
             </script>
         </head>

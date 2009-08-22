@@ -12,6 +12,20 @@ def getEntries(day,time,type):
               (day.strftime("%Y-%m-%d"), time.strftime("%I:%M"), type))
     return c.fetchall()
 
+def setEntry(day,time,type,t_id,num):
+    db = sqlite3.connect('signout.db')
+    c = db.cursor()
+    print "deleting"
+    print day
+    print time
+    print type
+    print t_id
+    print c.execute("delete from entries where day=? and start_time=? and signee_id=? and signer_id=?",
+              (day, time, type, t_id)).rowcount
+    c.execute("insert into entries values (?,?,?,?,?,?,?,?)",
+        (None, day, time, time, "", num, type, t_id))
+    db.commit()
+
 def getTeachers():
     c = connect()
     c.execute("select * from teachers")
