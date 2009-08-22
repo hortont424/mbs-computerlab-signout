@@ -2,11 +2,8 @@
 
 import datetime
 import db
-import hashlib
 import utils
 import cherrypy
-
-password_hash = "1169352c31919b66930b14c0375cd34f"
 
 def authSetDate(date):
     cherrypy.session["date"] = date
@@ -26,13 +23,9 @@ def authGetID():
     except:
         return None
 
-def authLogin(id,passwd):
-    m = hashlib.md5()
-    m.update(passwd);
-    if(m.hexdigest() != password_hash):
-        return False
+def authLogin(id):
     cherrypy.session["id"] = id
-    cherrypy.session["loggedIn"] = passwd
+    cherrypy.session["loggedIn"] = id
     return True
 
 def authLogout():

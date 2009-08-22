@@ -30,6 +30,9 @@ def generateSignoutDaySlots(weekOf, startTime, type):
         
         daySlots += " onclick='signout(\"" + currentUser + "\"," + str(currentUserInBox) + "," + str(quantity) + ", \"" + day.strftime("%Y-%m-%d") + "\",\"" + startTime.strftime("%I:%M") + "\")'>"
         
+        if not entries:
+            daySlots += "&nbsp;"
+
         for entry in entries:
             if db.getTeacherName(entry[7]) == currentUser:
                 daySlots += "<div class='signoutEntry'>"
@@ -115,7 +118,7 @@ class signoutPage:
     def index(self, date=None):
         date = utils.normalizeDate(date)
         
-        yield """
+        src = """
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
             "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -162,11 +165,15 @@ class signoutPage:
                 var signout = $("#signoutButton");
                 var teacher = $("#teacher")[0].value;
                 var ot = $("#otherText")[0].value;
-                var password = $("#passwd")[0].value;
-                
+
+                for (var i = 0, l = $("#teacher")[0].length; i < l; ++i)
+                {
+                    if ((o = $("#teacher")[0].options[i]).selected)
+                        teacher = o.text;
+                }
+
                 if(((teacher == "Other" && ot != "") ||
-                    (teacher != "Other" && teacher != "")) &&
-                   ($.md5(password) == "%(pw)s"))
+                    (teacher != "Other" && teacher != "")))
                     signout.css("display", "block");
                 else
                     signout.css("display", "none");
@@ -177,11 +184,6 @@ class signoutPage:
                 updateOtherField();
                 updateContinuable();
             }
-            
-            function changedPassword()
-            {
-                updateContinuable();
-            }
             </script>
         </head>
         <body>
@@ -189,22 +191,18 @@ class signoutPage:
                 <a href="/"><img src="/static/signout-logo.png" id="logo"/></a>
             </div>
             <div id="headerButton">
-                Signing out %(slug)s
+                Signing out %(slugN)s
             </div>
             <form id="signinForm" name="signinForm" action="choose" method="post">
                 <div class="headerButtonSmall" style="text-align: left;">
                     <table border="0px" cellpadding="6px" width="100%%">
                     <tr>
-                        <td style="text-align: right;"><b>Name:</b></td>
-                        <td>%(teachers)s</td>
+                        <td style="text-align: right;" width="50%%"><b>Name:</b></td>
+                        <td width="50%%">%(teachers)s</td>
                     </tr>
                     <tr id="otherText" style="display: none;">
                         <td style="text-align: right;"><b>Other:</b></td>
                         <td><input type="text" name="other"/></td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: right;"><b>Password:</b></td>
-                        <td><input type="password" id="passwd" name="passwd" onchange='changedPassword()' onkeyup='changedPassword()' /></td>
                     </tr>
                     </table>
                 </div>
@@ -218,60 +216,59 @@ class signoutPage:
                 "id": self.type,
                 "name": db.getResourceName(self.type),
                 "slug": db.getResourceSlug(self.type),
+                "slugN": db.getResourceSlugN(self.type),
                 "q": db.getResourceQuantity(self.type),
-                "teachers": "".join(list(generateTeachersDropdown())),
-                "pw": password_hash }
+                "teachers": "".join(list(generateTeachersDropdown())) }
+        return src
 
     index.exposed = True
         
-    def choose(self, date=None, teacher=None, passwd=None, other=None, time=None, signout=None, day=None, logout=None):
+    def choose(self, date=None, teacher=None, other=None, time=None, signout=None, day=None, logout=None):
         date = utils.normalizeDate(date)
         
         if logout is not None:
             authLogout()
-            yield """
+            print "logout"
+            return """
             <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
                 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
             <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
             <script>window.location='/'</script></html>"""
-            return
         
-        if (passwd == None or teacher == None) and not authGetLoggedIn():
-            yield """
+        if (teacher == None) and not authGetLoggedIn():
+            print "not logged in, missing data"
+            return """
             <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
                 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
             <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
             <script>window.location='/'</script></html>"""
-            return
         
-        if (passwd != None and teacher != None) and not authLogin(teacher, passwd):
-            yield """
+        if (teacher != None) and not authLogin(teacher):
+            return """
             <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
                 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
             <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
             Wrong password! Go back and try again...</html>"""
-            return
         
         if not authGetLoggedIn():
-            yield """
+            print "still not logged in"
+            return """
             <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
                 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
             <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
             <script>window.location='/'</script></html>"""
-            return
         
         teacher = authGetID()
         
         if signout is not None:
             db.setEntry(day,time,self.type,db.getTeacherId(teacher),signout)
-            yield """
+            return """
             <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
                 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
             <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
             <script>window.location='?'</script></html>"""
-            return
         
-        yield """
+        src = """
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
             "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -300,8 +297,8 @@ class signoutPage:
                     moreStr = "(" + leftQ + " more) ";
                 
                 res = prompt("You currently have " + currentQ +
-                             " %(slug)s signed out for " + time + " on " + date + ".\\n\\n" +
-                             "You can sign out up to " + (currentQ + leftQ) + " %(slug)s " + moreStr + "in that slot:\\n", currentQ);
+                             " %(slugN)s signed out for " + time + " on " + date + ".\\n\\n" +
+                             "You can sign out up to " + (currentQ + leftQ) + " %(slugN)s " + moreStr + "in that slot:\\n", currentQ);
                 
                 if(res == null)
                     return;
@@ -315,7 +312,7 @@ class signoutPage:
                 
                 if(res > (currentQ + leftQ))
                 {
-                    alert("You requested " + (res - currentQ) + " additional %(slug)s. However, there are only " + leftQ + " available. Please try again.");
+                    alert("You requested " + (res - currentQ) + " additional %(slugN)s. However, there are only " + leftQ + " available. Please try again.");
                     signout(name, currentQ, leftQ, date, time);
                     return;
                 }
@@ -329,10 +326,10 @@ class signoutPage:
                 <a href="/"><img src="/static/signout-logo.png" id="logo"/></a>
             </div>
             <div id="headerButton">
-                Signing out %(slug)s<br/><small><small>as "%(name)s"</small></small>
+                Signing out %(slugN)s<br/><small><small>as "%(name)s"</small></small>
                 <div id="headerButtonSub">
                     The number of remaining seats in each time slot is indicated below. Click on a time slot to change the number of seats <em>you</em> need. When you are done, click the button below to continue.<br/><br/>
-                    Each slot has %(q)d %(slug)s available unless otherwise noted.
+                    Each slot has %(q)d %(slugN)s available unless otherwise noted.
                 </div>
             </div>
             <a href="?logout=1"><div id="signoutButton">
@@ -342,13 +339,16 @@ class signoutPage:
                 "id": self.type,
                 "name": db.getResourceName(self.type),
                 "slug": db.getResourceSlug(self.type),
+                "slugN": db.getResourceSlugN(self.type),
                 "q": db.getResourceQuantity(self.type),
                 "name": teacher }
 
-        yield "".join(list(generateSignoutSchedulePage(date,self.type)))
+        src += "".join(list(generateSignoutSchedulePage(date,self.type)))
 
-        yield """
+        src += """
             </div>
         </body>
         </html>"""
+        
+        return src
     choose.exposed = True

@@ -57,6 +57,15 @@ def getResourceSlug(r_id):
     c.execute("select slug from resources where id=?", (r_id,))
     return c.fetchone()[0]
 
+def getResourceSlugN(r_id):
+    c = connect()
+    c.execute("select slug from resources where id=?", (r_id,))
+    sl = c.fetchone()[0]
+    if sl == "laptoplab":
+        sl = "laptop lab"
+    return sl
+
+
 def getResourceQuantity(r_id):
     c = connect()
     c.execute("select quantity from resources where id=?", (r_id,))
@@ -74,9 +83,9 @@ def getResourceSlotCount(r_id):
 
 def loadData(c):
     c.executescript(readFile("sql.txt"))
-    c.execute("insert into resources values (?,?,?,?,?,?,?)", (1,"Lab Computers","computers","",25,35,9))
-    c.execute("insert into resources values (?,?,?,?,?,?,?)", (2,"Laptops","laptops","",20,185,2))
-    c.execute("insert into resources values (?,?,?,?,?,?,?)", (3,"Projectors","projectors","",2,185,2))
+    c.execute("insert into resources values (?,?,?,?,?,?,?)", (1,"Lab Computers","computers","",24,35,9))
+    c.execute("insert into resources values (?,?,?,?,?,?,?)", (2,"Laptop Lab","laptoplab","",1,185,2))
+    c.execute("insert into resources values (?,?,?,?,?,?,?)", (3,"Projector","projector","",1,185,2))
     
     for t in ("Barnes", "Bonfigli", "Eaton", "Fitzpatrick", "Jamison", "Miles", "Rayner", "Schroeder"):
         c.execute("insert into teachers values (?,?,?)", (None,t,""))
@@ -86,20 +95,6 @@ def loadData(c):
         c.execute("insert into teachers values (?,?,?)", (None,t,""))
     for t in ("Special Ed.", "Other"):
         c.execute("insert into teachers values (?,?,?)", (None,t,""))
-    
-    c_id = 1
-    cheney_id = 3
-    eaton_id = 4
-    c.execute("insert into entries values (?,?,?,?,?,?,?,?)",
-        (None, "2009-08-18", "08:45", "09:20", "", 5, c_id, eaton_id))
-    c.execute("insert into entries values (?,?,?,?,?,?,?,?)",
-        (None, "2009-08-19", "08:45", "09:20", "", 5, c_id, eaton_id))
-    c.execute("insert into entries values (?,?,?,?,?,?,?,?)",
-        (None, "2009-08-20", "08:45", "09:20", "", 5, c_id, eaton_id))
-    c.execute("insert into entries values (?,?,?,?,?,?,?,?)",
-        (None, "2009-08-18", "09:25", "10:00", "", 15, c_id, cheney_id))
-    c.execute("insert into entries values (?,?,?,?,?,?,?,?)",
-        (None, "2009-08-18", "09:25", "10:00", "", 5, c_id, eaton_id))
 
 def connect():
     db = sqlite3.connect('signout.db')

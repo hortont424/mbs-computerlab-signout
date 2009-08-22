@@ -16,7 +16,7 @@ def generateDaySlots(weekOf, startTime, type):
         if entries:
             daySlots += "<td class='tFilled'>"
         else:
-            daySlots += "<td>"
+            daySlots += "<td class='tBordered'>&nbsp;"
         
         for entry in entries:
             daySlots += "<div class='entry'>"
@@ -106,12 +106,13 @@ class tabbedSchedulePage:
                 %(tabs)s
             </div>
             <a href="/%(slug)s/signout"><div id="signoutButton">
-                <img src="/static/add.png" valign="top"/> Sign out %(slug)s
+                <img src="/static/add.png" valign="top"/> Sign out %(slugN)s
             </div></a>
             <div id="schedule">""" % {
                 "id": self.type,
                 "name": db.getResourceName(self.type),
                 "slug": db.getResourceSlug(self.type),
+                "slugN": db.getResourceSlugN(self.type),
                 "tabs": generateTabs(),
                 "date": date }
 
