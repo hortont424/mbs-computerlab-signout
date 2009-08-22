@@ -18,6 +18,7 @@ def generateSignoutDaySlots(weekOf, startTime, type):
         for entry in entries:
             if db.getTeacherName(entry[7]) == currentUser:
                 currentUserInBox = entry[5]
+            quantity -= entry[5]
         
         if entries:
             if currentUserInBox:
@@ -27,7 +28,7 @@ def generateSignoutDaySlots(weekOf, startTime, type):
         else:
             daySlots += "<td class='ts' "
         
-        daySlots += " onclick='signout(\"" + currentUser + "\"," + str(currentUserInBox) + ", \"" + weekOf.strftime("%Y-%m-%d") + "\",\"" + startTime.strftime("%I:%M") + "\")'>"
+        daySlots += " onclick='signout(\"" + currentUser + "\"," + str(currentUserInBox) + "," + str(quantity) + ", \"" + day.strftime("%Y-%m-%d") + "\",\"" + startTime.strftime("%I:%M") + "\")'>"
         
         for entry in entries:
             if db.getTeacherName(entry[7]) == currentUser:
@@ -37,7 +38,6 @@ def generateSignoutDaySlots(weekOf, startTime, type):
             daySlots += db.getTeacherName(entry[7])
             daySlots += " (%(q)d)" % {"q": entry[5]}
             daySlots += "</div>"
-            quantity -= entry[5]
         
         if entries:
             daySlots += "<div class='leftEntryAfter'>%(q)d left</div>" % {"q": quantity}
@@ -272,6 +272,20 @@ class signoutPage:
                 padding: 20px 15px 20px 15px;
             }
             </style>
+            <script src="/static/jquery.min.js"></script>
+            <script>
+            function signout(name, currentQ, leftQ, date, time)
+            {
+                var moreStr = ""
+                
+                if(currentQ != 0)
+                    moreStr = "(" + leftQ + " more) "
+                
+                prompt("You currently have " + currentQ +
+                       " %(slug)s signed out for " + time + " on " + date + ".\\n\\n" +
+                       "You can sign out up to " + (currentQ + leftQ) + " %(slug)s " + moreStr + "in that slot:\\n", currentQ)
+            }
+            </script>
         </head>
         <body id="tab%(id)d">
             <div id="header">
