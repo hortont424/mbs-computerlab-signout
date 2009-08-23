@@ -7,6 +7,11 @@ import cherrypy
 import os
 import codecs
 import sys
+from time import time
+
+tarball_dir = "."
+backup_date = str(int(time()))
+backup_dir = os.path.join("/tmp", "backup", backup_date)
 
 computers_id = db.getResourceId("Lab Computers")
 laptops_id = db.getResourceId("Laptop Lab")
@@ -65,7 +70,7 @@ def backupType(type):
         tmpdate = tmpdate - datetime.timedelta(days=week.weekday())
         week = tmpdate.date()
 
-    mydir = os.path.join("backup", db.getResourceSlug(type))
+    mydir = os.path.join(backup_dir, db.getResourceSlug(type))
     if not os.path.exists(mydir):
         os.makedirs(mydir)
 
@@ -81,3 +86,5 @@ def backupType(type):
 backupType(computers_id)
 backupType(laptops_id)
 backupType(projectors_id)
+
+os.system("tar -C %(dir)s -cjf %(tb)s/backup-%(d)s.tar.bz2 ." % {"d":backup_date, "dir":backup_dir, "tb":tarball_dir})
