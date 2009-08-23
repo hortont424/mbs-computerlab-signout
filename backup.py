@@ -13,10 +13,6 @@ tarball_dir = "."
 backup_date = str(int(time()))
 backup_dir = os.path.join("/tmp", "backup", backup_date)
 
-computers_id = db.getResourceId("Lab Computers")
-laptops_id = db.getResourceId("Laptop Lab")
-projectors_id = db.getResourceId("Projector")
-
 def backupGetDateRange(type):
     entries = db.getAllEntries(type)
     dates = [datetime.datetime.strptime(x[1], "%Y-%m-%d").date() for x in entries]
@@ -83,8 +79,8 @@ def backupType(type):
         dataFile.close()
         week = (week + datetime.timedelta(weeks=1)).date()
 
-backupType(computers_id)
-backupType(laptops_id)
-backupType(projectors_id)
+def backup():
+    for res in db.getResources():
+        backupType(res[0])
 
 os.system("tar -C %(dir)s -cjf %(tb)s/backup-%(d)s.tar.bz2 ." % {"d":backup_date, "dir":backup_dir, "tb":tarball_dir})
