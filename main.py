@@ -25,7 +25,7 @@ root.laptoplab.signout = signoutPage(laptops_id)
 root.projector = tabbedSchedulePage(projectors_id)
 root.projector.signout = signoutPage(projectors_id)
 
-cherrypy.tree.mount(root, config=os.path.join(thisdir, 'tutorial.conf'))
+cherrypy.tree.mount(root, config=os.path.join(thisdir, 'mbs-signout.conf'))
 
 if __name__ == '__main__':
-    cherrypy.quickstart(config=os.path.join(thisdir, 'tutorial.conf'))
+    cherrypy.quickstart(config=os.path.join(thisdir, 'mbs-signout.conf'))
