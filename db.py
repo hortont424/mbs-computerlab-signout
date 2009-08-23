@@ -87,21 +87,6 @@ def getResourceSlotCount(r_id):
     c.execute("select slot_count from resources where id=?", (r_id,))
     return c.fetchone()[0]
 
-def loadData(c):
-    c.executescript(readFile("sql.txt"))
-    c.execute("insert into resources values (?,?,?,?,?,?,?)", (1,"Lab Computers","computers","",24,35,9))
-    c.execute("insert into resources values (?,?,?,?,?,?,?)", (2,"Laptop Lab","laptoplab","",1,185,2))
-    c.execute("insert into resources values (?,?,?,?,?,?,?)", (3,"Projector","projector","",1,185,2))
-    
-    for t in ("Barnes", "Bonfigli", "Eaton", "Fitzpatrick", "Jamison", "Miles", "Rayner", "Schroeder"):
-        c.execute("insert into teachers values (?,?,?)", (None,t,""))
-    for t in ("Boucher", "Cheney", "Chittenden", "Gallas", "Hunt", "Kilmer", "Longchamp"):
-        c.execute("insert into teachers values (?,?,?)", (None,t,""))
-    for t in ("Bryer", "Buswell", "DiGrande", "Galati", "Powsner", "Renner", "Rogers", "Winchester"):
-        c.execute("insert into teachers values (?,?,?)", (None,t,""))
-    for t in ("Special Ed.", "Other"):
-        c.execute("insert into teachers values (?,?,?)", (None,t,""))
-
 def connect():
     db = sqlite3.connect('signout.db')
     c = db.cursor()
@@ -110,5 +95,5 @@ def connect():
 if not os.path.exists('signout.db'):
     db = sqlite3.connect('signout.db')
     c = db.cursor()
-    loadData(c)
+    c.executescript(readFile("sql.txt"))
     db.commit()

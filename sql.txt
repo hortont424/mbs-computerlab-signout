@@ -23,4 +23,38 @@ CREATE TABLE "entries" (
     "signee_id" integer NOT NULL REFERENCES "resources" ("id"),
     "signer_id" integer NOT NULL REFERENCES "teachers" ("id")
 );
+
+INSERT INTO resources VALUES (1,"Lab Computers","computers","",24,35,9);
+INSERT INTO resources VALUES (2,"Laptop Lab","laptoplab","",1,185,2);
+INSERT INTO resources VALUES (3,"Projector","projector","",1,185,2);
+
+INSERT INTO teachers VALUES (NULL, "Barnes", "");
+INSERT INTO teachers VALUES (NULL, "Bonfigli", "");
+INSERT INTO teachers VALUES (NULL, "Eaton", "");
+INSERT INTO teachers VALUES (NULL, "Fitzpatrick", "");
+INSERT INTO teachers VALUES (NULL, "Jamison", "");
+INSERT INTO teachers VALUES (NULL, "Miles", "");
+INSERT INTO teachers VALUES (NULL, "Rayner", "");
+INSERT INTO teachers VALUES (NULL, "Schroeder", "");
+
+INSERT INTO teachers VALUES (NULL, "Boucher", "");
+INSERT INTO teachers VALUES (NULL, "Cheney", "");
+INSERT INTO teachers VALUES (NULL, "Chittenden", "");
+INSERT INTO teachers VALUES (NULL, "Gallas", "");
+INSERT INTO teachers VALUES (NULL, "Hunt", "");
+INSERT INTO teachers VALUES (NULL, "Kilmer", "");
+INSERT INTO teachers VALUES (NULL, "Longchamp", "");
+
+INSERT INTO teachers VALUES (NULL, "Bryer", "");
+INSERT INTO teachers VALUES (NULL, "Buswell", "");
+INSERT INTO teachers VALUES (NULL, "DiGrande", "");
+INSERT INTO teachers VALUES (NULL, "Galati", "");
+INSERT INTO teachers VALUES (NULL, "Powsner", "");
+INSERT INTO teachers VALUES (NULL, "Renner", "");
+INSERT INTO teachers VALUES (NULL, "Rogers", "");
+INSERT INTO teachers VALUES (NULL, "Winchester", "");
+
+INSERT INTO teachers VALUES (NULL, "Special Ed.", "");
+INSERT INTO teachers VALUES (NULL, "Other", "");
+
 COMMIT;
