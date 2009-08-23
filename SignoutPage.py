@@ -2,7 +2,7 @@
 
 import datetime
 import db
-import utils
+from utils import *
 from Authenticate import *
 
 def generateSignoutDaySlots(weekOf, startTime, type):
@@ -121,7 +121,7 @@ class signoutPage:
         self.type = t
     
     def index(self, date=None):
-        date = utils.normalizeDate(date)
+        date = normalizeDate(date)
         
         src = """
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -230,7 +230,7 @@ class signoutPage:
     index.exposed = True
         
     def choose(self, date=None, teacher=None, other=None, time=None, signout=None, day=None, logout=None):
-        date = utils.normalizeDate(date)
+        date = normalizeDate(date)
         
         if logout is not None:
             authLogout()
@@ -283,17 +283,6 @@ class signoutPage:
             <title>MBS Technology Signout</title>
             <link rel="stylesheet" href="/static/style.css" type="text/css" charset="utf-8" />
             <link rel="stylesheet" href="/static/round-button.css" type="text/css" charset="utf-8" />
-            <style type="text/css">
-            #header
-            {
-                border-bottom: 1px solid #666;
-            }
-
-            #logo
-            {
-                padding: 20px 15px 20px 15px;
-            }
-            </style>
             <script src="/static/jquery.min.js"></script>
             <script>
             function signout(name, currentQ, leftQ, date, time)
@@ -331,6 +320,7 @@ class signoutPage:
         <body id="tab%(id)d">
             <div id="header">
                 <a href="/"><img src="/static/signout-logo.png" id="logo"/></a>
+                %(tabs)s
             </div>
             <div id="headerButton">
                 Signing out %(slugN)s<br/><small><small>as "%(name)s"</small></small>
@@ -348,6 +338,7 @@ class signoutPage:
                 "slug": db.getResourceSlug(self.type),
                 "slugN": db.getResourceSlugN(self.type),
                 "q": db.getResourceQuantity(self.type),
+                "tabs": generateTabs("/signout/choose"),
                 "name": teacher }
 
         src += "".join(list(generateSignoutSchedulePage(date,self.type)))

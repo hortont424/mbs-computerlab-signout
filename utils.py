@@ -29,3 +29,13 @@ def normalizeDate(date):
     authSetDate(date)
     
     return date
+
+def generateTabs(append):
+    t = "<ul id='tabnav'>"
+
+    for res in db.getResources():
+        t += "<li class='tab%(id)d'><a href='/%(slug)s%(app)s'>%(name)s</a></li>" % {
+            "id": res[0], "name": res[1], "slug": res[2], "app": append}
+
+    t += "</ul>"
+    return t

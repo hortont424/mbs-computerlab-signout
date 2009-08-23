@@ -2,7 +2,7 @@
 
 import datetime
 import db
-import utils
+from utils import *
 from Authenticate import *
 
 def generateDaySlots(weekOf, startTime, type):
@@ -74,22 +74,12 @@ def generateSchedulePage(weekOf,type):
         startTime = startTime + datetime.timedelta(minutes=db.getResourceDuration(type)+5)
         endTime = endTime + datetime.timedelta(minutes=db.getResourceDuration(type)+5)
 
-def generateTabs():
-    t = "<ul id='tabnav'>"
-    
-    for res in db.getResources():
-        t += "<li class='tab%(id)d'><a href='/%(slug)s'>%(name)s</a></li>" % {
-            "id": res[0], "name": res[1], "slug": res[2]}
-    
-    t += "</ul>"
-    return t
-
 class tabbedSchedulePage:
     def __init__(self, t):
         self.type = t
         
     def index(self, date=None):
-        date = utils.normalizeDate(date)
+        date = normalizeDate(date)
         
         src = """
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -114,7 +104,7 @@ class tabbedSchedulePage:
                 "name": db.getResourceName(self.type),
                 "slug": db.getResourceSlug(self.type),
                 "slugN": db.getResourceSlugN(self.type),
-                "tabs": generateTabs(),
+                "tabs": generateTabs(""),
                 "date": date }
 
         src += "".join(list(generateSchedulePage(date,self.type)))
