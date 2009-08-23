@@ -14,9 +14,36 @@ def backupGetDateRange(type):
     dates = [datetime.datetime.strptime(x[1], "%Y-%m-%d").date() for x in entries]
     return (min(dates), max(dates))
 
-#def backupTimeslot(type, weekOf, startTime):
+def backupTimeslot(type, weekOf, startTime):
+    tstr = startTime.strftime("%I:%M") + ","
+    day = datetime.datetime.combine(weekOf, startTime)
+    
+    for i in range(0, 5):
+        entries = db.getEntries(day.date(), startTime, type)
+        for entry in entries:
+            tstr += db.getTeacherName(entry[7]) + "(" + str(entry[5]) + ");"
+        day = day + datetime.timedelta(days=1)
+        if i != 4:
+            tstr += ","
+    
+    tstr += "\n"
+    
+    return tstr
 
-#def backupWeekOf(type, weekOf):
+def backupWeekOf(type, weekOf):
+    startTime = datetime.datetime.combine(weekOf, datetime.time(8,45))
+    endTime = startTime + datetime.timedelta(minutes=db.getResourceDuration(type))
+    
+    weekstr = db.getResourceName(type) + " for the week of " + weekOf.strftime("%Y-%m-%d") + "\n\n"
+    
+    weekstr += ",M,T,W,Th,F\n"
+    
+    for i in range(0,db.getResourceSlotCount(type)):
+        weekstr += backupTimeslot(type, weekOf.date(), startTime.time())
+        startTime = startTime + datetime.timedelta(minutes=db.getResourceDuration(type)+5)
+        endTime = endTime + datetime.timedelta(minutes=db.getResourceDuration(type)+5)
+    
+    return weekstr
 
 def backupType(type):
     range = backupGetDateRange(type)
@@ -29,7 +56,9 @@ def backupType(type):
 
     while(week < range[1]):
         week = datetime.datetime.combine(week, datetime.time(0,0))
-        print week.strftime("%Y-%m-%d")
+        data = backupWeekOf(type, week)
         week = (week + datetime.timedelta(weeks=1)).date()
+    
+    return typestr
 
 print backupType(computers_id)
