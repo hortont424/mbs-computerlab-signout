@@ -3,7 +3,7 @@
 import datetime
 import db
 from utils import *
-from Authenticate import *
+from auth import *
 
 def generateSignoutDaySlots(weekOf, startTime, type):
     daySlots = ""

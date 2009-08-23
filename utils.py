@@ -2,7 +2,7 @@
 
 import codecs
 import datetime
-from Authenticate import *
+from auth import *
 
 def readFile(fn):
     fileHandle = codecs.open(fn, encoding='utf-8')
