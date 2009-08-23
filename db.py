@@ -33,6 +33,13 @@ def getTeachers():
     c.execute("select * from teachers")
     return c.fetchall()
 
+def getTeachersOfGrade(gr):
+    c = connect()
+    c.execute("select * from teachers where grade=?", (gr,))
+    ts = [t[1] for t in c.fetchall()]
+    ts.sort()
+    return ts
+
 def getTeacherName(t_id):
     c = connect()
     c.execute("select name from teachers where id=?", (t_id,))

@@ -96,20 +96,25 @@ def generateTeachersDropdown():
     yield "<option></option>"
     yield "<optgroup label='3rd Grade'>"
     
-    for t in ("Barnes", "Bonfigli", "Eaton", "Fitzpatrick", "Jamison", "Miles", "Rayner", "Schroeder"):
+    for t in db.getTeachersOfGrade(3):
         yield "<option name='%(name)s'>%(name)s</option>" % { "name": t }
     
     yield "</optgroup><optgroup label='4th Grade'>"
     
-    for t in ("Boucher", "Cheney", "Chittenden", "Gallas", "Hunt", "Kilmer", "Longchamp"):
+    for t in db.getTeachersOfGrade(4):
         yield "<option name='%(name)s'>%(name)s</option>" % { "name": t }
     
     yield "</optgroup><optgroup label='5th Grade'>"
     
-    for t in ("Bryer", "Buswell", "DiGrande", "Galati", "Powsner", "Renner", "Rogers", "Winchester"):
+    for t in db.getTeachersOfGrade(5):
         yield "<option name='%(name)s'>%(name)s</option>" % { "name": t }
     
-    yield "</optgroup><optgroup label='Misc.'><option name='Special Ed.'>Special Ed.</option><option name='Other'>Other</option></optgroup></select>"
+    yield "</optgroup><optgroup label='Misc.'>"
+    
+    for t in db.getTeachersOfGrade(0):
+        yield "<option name='%(name)s'>%(name)s</option>" % { "name": t }
+    
+    yield "</optgroup></select>"
 
 class signoutPage:
     def __init__(self, t):
