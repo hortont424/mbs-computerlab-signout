@@ -1,3 +1,43 @@
-=== mbs-computerlab-signout ===
+==== mbs-computerlab-signout ====
 
+ === Introduction ===
 
+	The MBS computer lab currently uses a somewhat hackish paper signout system,
+	which leads to significant problems when trying to access archives, retrieve
+	statistics, and share data.
+	
+	This application provides a web-based interface for a single-head signout
+	system, which will run on a machine in place of the paper binder currently
+	used. It strives to be as simple to understand as possible while providing
+	an improved feature set over the "old" solution.
+
+ === Caveats ===
+
+	* No locking: there is no locking mechanism in place, so if multiple users
+	              attempt to update the database in tandem, they can easily
+	              generate conflicts; this was designed to be accessed from a
+	              single machine, kiosk-style
+	* No password: there is no password protection during the signout process;
+	               this isn't a problem with the single-head design, but there 
+	               is a semi-complete implementation of protection a few Git
+	               revisions back
+	* No admin panel: there is currently no administration panel, so updating
+	                  the list of teachers is still a difficult prospect, which
+	                  involves editing a few source files and manually inserting
+	                  fields into the database
+
+ === TODO ===
+
+	* Admin panel: update resource counts and teacher lists
+	* "Other": show comment as name for "Other" teacher
+	* Design: make buttons (arrows and large buttons) look more like buttons
+
+ === Dependencies ===
+
+	* Python >= 2.6
+	* CherryPy HEAD (>= r2279)
+	* SQLite3
+
+ === Authors ===
+
+	* Tim Horton (hortont424@gmail.com)
