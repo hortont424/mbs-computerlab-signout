@@ -2,6 +2,7 @@
 
 import datetime
 import sqlite3
+import os
 from utils import *
 
 db = None
@@ -106,7 +107,8 @@ def connect():
     c = db.cursor()
     return c
 
-#db = sqlite3.connect('signout.db')
-#c = db.cursor()
-#loadData(c)
-#db.commit()
+if not os.path.exists('signout.db'):
+    db = sqlite3.connect('signout.db')
+    c = db.cursor()
+    loadData(c)
+    db.commit()
