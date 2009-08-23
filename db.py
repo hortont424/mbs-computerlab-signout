@@ -6,6 +6,11 @@ from utils import *
 
 db = None
 
+def getAllEntries(type):
+    c = connect()
+    c.execute("select * from entries where signee_id=?", (type,))
+    return c.fetchall()
+
 def getEntries(day,time,type):
     c = connect()
     c.execute("select * from entries where day=? and start_time=? and signee_id=?",
