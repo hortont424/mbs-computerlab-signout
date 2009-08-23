@@ -62,7 +62,7 @@ def generateSignoutSchedulePage(weekOf,type):
     
     yield u"""
     <div id="schedule">
-        <div id="scheduleHeader">%(last)s Schedule for week of %(week)s %(next)s</div>
+        <div id="scheduleHeader"><a class="button" href="%(last)s"><span>←</span></a> <span id='schedTitle'>Schedule for week of %(week)s</span> <a class="button" href="%(next)s"><span>→</span></a></div>
         <table id="scheduleTable" cellpadding="0px" cellspacing="4px">
             <tr>
                 <td class="tHide"></td>
@@ -72,8 +72,8 @@ def generateSignoutSchedulePage(weekOf,type):
                 <td class="tHeader">Thursday</td>
                 <td class="tHeader">Friday</td>
             </tr>""" % {"week": weekOf.strftime("%B %d, %Y"),
-                        "last": "<a href='?date=" + lastWeekStr + u"'>←</a>",
-                        "next": "<a href='?date=" + nextWeekStr + u"'>→</a>"}
+                        "last": "?date=" + lastWeekStr,
+                        "next": "?date=" + nextWeekStr}
     
     startTime = datetime.datetime.combine(weekOf, datetime.time(8,45))
     endTime = startTime + datetime.timedelta(minutes=db.getResourceDuration(type))
@@ -131,6 +131,7 @@ class signoutPage:
             <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
             <title>MBS Technology Signout</title>
             <link rel="stylesheet" href="/static/style.css" type="text/css" charset="utf-8" />
+            <link rel="stylesheet" href="/static/round-button.css" type="text/css" charset="utf-8" />
             <style type="text/css">
             #header
             {
@@ -281,6 +282,7 @@ class signoutPage:
             <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
             <title>MBS Technology Signout</title>
             <link rel="stylesheet" href="/static/style.css" type="text/css" charset="utf-8" />
+            <link rel="stylesheet" href="/static/round-button.css" type="text/css" charset="utf-8" />
             <style type="text/css">
             #header
             {

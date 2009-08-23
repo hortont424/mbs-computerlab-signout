@@ -208,3 +208,8 @@ div.leftEntryAfter
 	padding-top: 5px;
 	color: #888;
 }
+
+#schedTitle
+{
+    margin: 0px 30px;
+}
