@@ -33,9 +33,18 @@
 
  === Dependencies ===
 
+	For the server:
+
 	* Python >= 2.6
 	* CherryPy HEAD (>= r2279)
 	* SQLite3
+
+	For the kiosk:
+
+	* WebKitGtk >= 1.0
+	* Gtk+ >= 2.0
+	* libsoup >= 2.4
+	* GLib >= 2.0
 
  === Authors ===
 
