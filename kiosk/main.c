@@ -26,6 +26,7 @@
 
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
+#include <libsoup/soup.h>
 
 char signinURL[] = "http://mbs.hortont.com/";
 
@@ -60,6 +61,35 @@ shutdown_cb (GtkWidget* widget, gpointer data)
 static void
 reload_cb (GtkWidget* widget, gpointer data)
 {
+    // Clear cookies
+    SoupSession * session = NULL;
+    SoupCookieJar * cj = NULL;
+    GSList * cookies = NULL;
+    
+    session = webkit_get_default_session();
+    
+    if(session == NULL)
+        goto give_up;
+    
+    cj = (SoupCookieJar*)soup_session_get_feature(session,
+                                                  soup_cookie_jar_get_type());
+    
+    if(cj == NULL)
+        goto give_up;
+    
+    cookies = soup_cookie_jar_all_cookies(cj);
+    
+    if(cookies == NULL)
+        goto give_up;
+    
+    do
+    {
+        soup_cookie_jar_delete_cookie(cj, ((SoupCookie*)(cookies->data)));
+    }
+    while((cookies = g_slist_next(cookies)) != NULL);
+    
+    // Reload main page
+give_up:
     webkit_web_view_load_uri (web_view, signinURL);
 }
 
@@ -91,7 +121,7 @@ create_toolbar ()
     g_signal_connect (G_OBJECT (item), "clicked", G_CALLBACK (shutdown_cb), NULL);
     gtk_box_pack_start (GTK_BOX (toolbar), item, FALSE, FALSE, 5);
 
-    item = gtk_button_new_with_label ("Reload");
+    item = gtk_button_new_with_label ("Reset");
     g_signal_connect (G_OBJECT (item), "clicked", G_CALLBACK (reload_cb), NULL);
     gtk_box_pack_end (GTK_BOX (toolbar), item, FALSE, FALSE, 5);
 
