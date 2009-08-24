@@ -62,7 +62,7 @@ def generateSignoutSchedulePage(weekOf,type):
     
     yield u"""
     <div id="schedule">
-        <div id="scheduleHeader"><div class="smallbutton"><a href="%(last)s">←</a></div> <span id='schedTitle'>Schedule for week of %(week)s</span> <div class="smallbutton"><a href="%(next)s">→</a></div></div>
+        <div id="scheduleHeader"><div class="smallbutton" onclick="window.location='%(last)s'"><a href="%(last)s">←</a></div> <span id='schedTitle'>Schedule for week of %(week)s</span> <div class="smallbutton" onclick="window.location='%(next)s'"><a href="%(next)s">→</a></div></div>
         <br />
         <table id="scheduleTable" cellpadding="0px" cellspacing="4px">
             <tr>
