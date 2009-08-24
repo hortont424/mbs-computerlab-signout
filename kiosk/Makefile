@@ -1,4 +1,11 @@
-CFLAGS=`pkg-config --cflags webkit-1.0`
-LDFLAGS=`pkg-config --libs webkit-1.0`
+OBJS = kiosk
 
-all: main
+CFLAGS = `pkg-config --cflags webkit-1.0`
+LDFLAGS = `pkg-config --libs webkit-1.0`
+
+CFLAGS += -Wall
+
+all: $(OBJS)
+
+clean:
+	rm $(OBJS)
