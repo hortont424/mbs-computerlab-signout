@@ -28,7 +28,7 @@
 #include <webkit/webkit.h>
 #include <libsoup/soup.h>
 
-char signinURL[] = "http://mbs.hortont.com/";
+char signinURL[] = "http://localhost:8080/";
 
 static GtkWidget * main_window;
 static WebKitWebView * web_view;
