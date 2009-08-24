@@ -62,7 +62,7 @@ static void reload_cb(GtkWidget* widget, gpointer data)
     // Clear cookies
     SoupSession * session = NULL;
     SoupCookieJar * cj = NULL;
-    GSList * cookies = NULL;
+    GSList * cookies = NULL, * cookie_list = NULL;
     
     session = webkit_get_default_session();
     
@@ -75,7 +75,7 @@ static void reload_cb(GtkWidget* widget, gpointer data)
     if(cj == NULL)
         goto give_up;
     
-    cookies = soup_cookie_jar_all_cookies(cj);
+    cookie_list = cookies = soup_cookie_jar_all_cookies(cj);
     
     if(cookies == NULL)
         goto give_up;
@@ -85,6 +85,8 @@ static void reload_cb(GtkWidget* widget, gpointer data)
         soup_cookie_jar_delete_cookie(cj, ((SoupCookie*)(cookies->data)));
     }
     while((cookies = g_slist_next(cookies)) != NULL);
+
+    g_slist_free(cookie_list);
     
     // Reload main page
 give_up:
