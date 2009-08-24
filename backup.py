@@ -82,5 +82,10 @@ def backupType(type):
 def backup():
     for res in db.getResources():
         backupType(res[0])
+    mydir = os.path.join(backup_dir, "other")
+    if not os.path.exists(mydir):
+        os.makedirs(mydir)
+    os.system("echo '.dump' | sqlite3 signout.db | gzip -c > %(dir)s/db-dump.gz" % {"dir":mydir})
 
+backup()
 os.system("tar -C %(dir)s -cjf %(tb)s/backup-%(d)s.tar.bz2 ." % {"d":backup_date, "dir":backup_dir, "tb":tarball_dir})
