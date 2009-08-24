@@ -16,8 +16,8 @@ ul#tabnav li
 
 body#tab1 li.tab1, body#tab2 li.tab2, body#tab3 li.tab3, body#tab4 li.tab4
 {
-	border-bottom: 1px solid #eee; /* set border color to page background color */
-	background-color: #eee; /* set background color to match above border color */
+	border-bottom: 1px solid #ccc; /* set border color to page background color */
+	background-color: #ccc; /* set background color to match above border color */
 }
 
 body#tab1 li.tab1 a, body#tab2 li.tab2 a, body#tab3 li.tab3 a, body#tab4 li.tab4 a
@@ -35,7 +35,7 @@ ul#tabnav li a
 	border: 1px solid #666; /* set border COLOR as desired; usually matches border color specified in #tabnav */
 	background-color: #ddd; /* set unselected tab background color as desired */
 	color: #666; /* set unselected tab link color as desired */
-	margin-right: 0px; /* set additional spacing between tabs as desired */
+	margin-right: 12px; /* set additional spacing between tabs as desired */
 	text-decoration: none;
 	border-bottom: none;
 }
@@ -82,12 +82,19 @@ body
 
 #signoutButton
 {
-	font-size: 2em;
+	font-size: 1.8em;
 	margin: 20px 15%;
 	padding: 15px;
 	background-color: #cdeb8b;
-	border: 2px solid #4e9a06;
+	border: 3px solid #4e9a06;
 	text-align: center;
+	-webkit-border-radius: 12px;
+}
+
+#signoutButton:hover
+{
+    background-color: #bddb7b;
+    border: 3px solid #2e7a00;
 }
 
 #schedule
