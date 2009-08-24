@@ -45,7 +45,8 @@ def generateSchedulePage(weekOf,type):
     
     yield u"""
     <div id="schedule">
-        <div id="scheduleHeader"><a class="button" href="%(last)s"><span>←</span></a> <span id='schedTitle'>Schedule for week of %(week)s</span> <a class="button" href="%(next)s"><span>→</span></a></div>
+        <div id="scheduleHeader"><div class="smallbutton"><a href="%(last)s">←</a></div> <span id='schedTitle'>Schedule for week of %(week)s</span> <div class="smallbutton"><a href="%(next)s">→</a></div></div>
+        <br />
         <table id="scheduleTable" cellpadding="0px" cellspacing="4px">
             <tr>
                 <td class="tHide"></td>
@@ -89,7 +90,6 @@ class tabbedSchedulePage:
             <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
             <title>MBS Technology Signout</title>
             <link rel="stylesheet" href="/static/style.css" type="text/css" charset="utf-8" />
-            <link rel="stylesheet" href="/static/round-button.css" type="text/css" charset="utf-8" />
         </head>
         <body id="tab%(id)d">
             <div id="header">

@@ -80,21 +80,41 @@ body
 	border: 0px;
 }
 
+div.smallbutton
+{
+	display: inline;
+	font-size: 1.5em;
+	width: 3em;
+	padding: 2px 15px;
+	background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee), color-stop(0.45, #eee), color-stop(0.55, #ddd));
+	border: 2px solid #999;
+	text-align: center;
+	-webkit-border-radius: 12px;
+	cursor: pointer;
+	cursor: hand;
+}
+
+div.smallbutton:hover
+{
+	background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#ddd), color-stop(0.45, #ddd), color-stop(0.55, #ccc));
+	border: 2px solid #00c9f7;
+}
+
 #signoutButton
 {
 	font-size: 1.8em;
 	margin: 20px 15%;
 	padding: 15px;
-	background-color: #cdeb8b;
-	border: 3px solid #4e9a06;
+	background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee), color-stop(0.45, #eee), color-stop(0.55, #ddd));
+	border: 2px solid #999;
 	text-align: center;
 	-webkit-border-radius: 12px;
 }
 
 #signoutButton:hover
 {
-    background-color: #bddb7b;
-    border: 3px solid #2e7a00;
+	background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#ddd), color-stop(0.45, #ddd), color-stop(0.55, #ccc));
+	border: 2px solid #00c9f7;
 }
 
 #schedule
