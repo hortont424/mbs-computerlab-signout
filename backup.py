@@ -88,4 +88,4 @@ def backup():
     os.system("echo '.dump' | sqlite3 signout.db | gzip -c > %(dir)s/db-dump.gz" % {"dir":mydir})
 
 backup()
-os.system("tar -C %(dir)s -cjf %(tb)s/backup-%(d)s.tar.bz2 ." % {"d":backup_date, "dir":backup_dir, "tb":tarball_dir})
+os.system("cd %(dir)s ; zip -r %(tb)s/backup-%(d)s.zip ." % {"d":backup_date, "dir":backup_dir, "tb":tarball_dir})
