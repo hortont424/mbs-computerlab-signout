@@ -93,7 +93,7 @@ class tabbedSchedulePage:
         </head>
         <body id="tab%(id)d">
             <div id="header">
-                <a href="/"><img src="/static/signout-logo.png" id="logo"/></a>
+                <img src="/static/signout-logo.png" id="logo"/>
                 %(tabs)s
             </div>
             <a href="/%(slug)s/signout"><div id="signoutButton">

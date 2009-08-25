@@ -176,7 +176,7 @@ class signoutPage:
         </head>
         <body>
             <div id="header">
-                <a href="/"><img src="/static/signout-logo.png" id="logo"/></a>
+                <img src="/static/signout-logo.png" id="logo"/>
             </div>
             <form id="signinForm" name="signinForm" action="choose" method="post">
                 <div class="headerButtonSmall" style="text-align: left;">
@@ -297,7 +297,7 @@ class signoutPage:
         </head>
         <body id="tab%(id)d">
             <div id="header">
-                <a href="/"><img src="/static/signout-logo.png" id="logo"/></a>
+                <img src="/static/signout-logo.png" id="logo"/>
                 %(tabs)s
             </div>
             <div id="headerButton">
