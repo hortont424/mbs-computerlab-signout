@@ -156,21 +156,10 @@ class signoutPage:
             <script src="/static/jquery.min.js"></script>
             <script src="/static/jquery.md5.js"></script>
             <script>
-            function updateOtherField()
-            {
-                var ot = $("#otherText");
-                
-                if($("#teacher")[0].value == "Other")
-                    ot.css("display", "table-row");
-                else
-                    ot.css("display", "none");
-            }
-            
-            function updateContinuable()
+            function checkSubmit()
             {
                 var signout = $("#signoutButton");
                 var teacher = $("#teacher")[0].value;
-                var ot = $("#otherText")[0].value;
 
                 for (var i = 0, l = $("#teacher")[0].length; i < l; ++i)
                 {
@@ -178,20 +167,11 @@ class signoutPage:
                         teacher = o.text;
                 }
 
-                if(((teacher == "Other" && ot != "") ||
-                    (teacher != "Other" && teacher != "")))
-                    signout.css("display", "block");
+                if(teacher != "")
+                    document.signinForm.submit();
                 else
-                    signout.css("display", "none");
+                    alert("Please specify who you are...");
             }
-
-            function changedNameSelection()
-            {
-                updateOtherField();
-                updateContinuable();
-            }
-            
-            setTimeout(changedNameSelection, 250);
             </script>
         </head>
         <body>
@@ -206,17 +186,13 @@ class signoutPage:
                     <br/>
                     <table border="0px" cellpadding="6px" width="100%%">
                     <tr>
-                        <td style="text-align: right;" width="45%%"><b>Name:</b></td>
+                        <td style="text-align: right;" width="45%%"><b>Select your name:</b></td>
                         <td width="55%%">%(teachers)s</td>
-                    </tr>
-                    <tr id="otherText" style="display: none;">
-                        <td style="text-align: right;"><b>Other:</b></td>
-                        <td><input type="text" name="other"/></td>
                     </tr>
                     </table>
                 </div>
             </form>
-            <a href="javascript:document.signinForm.submit()"><div id="signoutButton" style="display: none;">
+            <a href="javascript:checkSubmit()"><div id="signoutButton">
                 <img src="/static/play.png" valign="top"/> Continue to time slot selection
             </div></a>
         </body>
