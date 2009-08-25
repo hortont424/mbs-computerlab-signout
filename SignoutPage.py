@@ -196,15 +196,16 @@ class signoutPage:
             <div id="header">
                 <a href="/"><img src="/static/signout-logo.png" id="logo"/></a>
             </div>
-            <div id="headerButton">
-                Signing out %(slugN)s
-            </div>
             <form id="signinForm" name="signinForm" action="choose" method="post">
                 <div class="headerButtonSmall" style="text-align: left;">
+                    <div style="font-size: 1.5em; text-align: center;">
+                        Signing out %(slugN)s
+                    </div>
+                    <br/>
                     <table border="0px" cellpadding="6px" width="100%%">
                     <tr>
-                        <td style="text-align: right;" width="50%%"><b>Name:</b></td>
-                        <td width="50%%">%(teachers)s</td>
+                        <td style="text-align: right;" width="45%%"><b>Name:</b></td>
+                        <td width="55%%">%(teachers)s</td>
                     </tr>
                     <tr id="otherText" style="display: none;">
                         <td style="text-align: right;"><b>Other:</b></td>
@@ -322,10 +323,10 @@ class signoutPage:
                 %(tabs)s
             </div>
             <div id="headerButton">
-                Signing out %(slugN)s<br/><small><small>as "%(name)s"</small></small>
+                <small><small><b>Signing out %(slugN)s as <i>%(name)s</i></b></small></small>
                 <div id="headerButtonSub">
-                    The number of remaining seats in each time slot is indicated below. Click on a time slot to change the number of seats <em>you</em> need. When you are done, click the button below to continue.<br/><br/>
-                    Each slot has %(q)d %(slugN)s available unless otherwise noted.
+                    The number of remaining seats in each time slot is indicated below. Click on a time slot to change the number of seats <em>you</em> need. When you are done, click the button below to continue.
+                    Each slot has <b>%(q)d</b> %(slugN)s available unless otherwise noted.
                 </div>
             </div>
             <a href="?logout=1"><div id="signoutButton">

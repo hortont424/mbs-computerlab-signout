@@ -4,7 +4,7 @@ ul#tabnav
 	margin: 0em 0 1em 0; /* set margins as desired */
 	border-bottom: 1px solid #666; /* set border COLOR as desired */
 	list-style-type: none;
-	font-size: 1.2em;
+	font-size: 1.1em;
 	font-weight: bold;
 	padding: 3px 10px 3px 10px; /* THIRD number must change with respect to padding-top (X) below */
 }
@@ -83,7 +83,7 @@ body
 div.smallbutton
 {
 	display: inline;
-	font-size: 1.5em;
+	font-size: 1.2em;
 	width: 3em;
 	padding: 2px 15px;
 	background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee), color-stop(0.45, #eee), color-stop(0.55, #ddd));
@@ -102,9 +102,9 @@ div.smallbutton:hover
 
 #signoutButton
 {
-	font-size: 1.8em;
-	margin: 20px 15%;
-	padding: 15px;
+	font-size: 1.5em;
+	margin: 10px 15%;
+	padding: 7px;
 	background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee), color-stop(0.45, #eee), color-stop(0.55, #ddd));
 	border: 2px solid #999;
 	text-align: center;
@@ -124,13 +124,13 @@ div.smallbutton:hover
 
 #scheduleHeader
 {
-	font-size: 1.25em;
+	font-size: 1.1em;
 }
 
 #scheduleTable
 {
 	width: 100%;
-	padding: 10px;
+	padding: 5px;
 }
 
 td
@@ -194,8 +194,8 @@ div.signoutEntry
 
 #headerButton, div.headerButton
 {
-	font-size: 2em;
-	margin: 20px 15%;
+	font-size: 1.5em;
+	margin: 10px 5%;
 	padding: 15px;
 	background-color: #99bde3;
 	border: 2px solid #204a87;
