@@ -190,6 +190,8 @@ class signoutPage:
                 updateOtherField();
                 updateContinuable();
             }
+            
+            setTimeout(changedNameSelection, 250);
             </script>
         </head>
         <body>
