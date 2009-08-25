@@ -24,6 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <stdlib.h>
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 #include <libsoup/soup.h>
@@ -33,9 +34,8 @@ char signinURL[] = "http://localhost:8080/";
 static GtkWidget * main_window;
 static WebKitWebView * web_view;
 
-static void shutdown_cb(GtkWidget* widget, gpointer data)
+static void shutdown_cb(GtkWidget * widget, gpointer data)
 {
-    // todo: shut down!
     GtkWidget * dialog = NULL;
     int res = 0;
     
@@ -50,6 +50,7 @@ static void shutdown_cb(GtkWidget* widget, gpointer data)
     switch(res)
     {
         case GTK_RESPONSE_YES:
+            system("sudo halt");
             gtk_main_quit();
             break;
         default:
@@ -57,7 +58,12 @@ static void shutdown_cb(GtkWidget* widget, gpointer data)
     }
 }
 
-static void reload_cb(GtkWidget* widget, gpointer data)
+static void backup_cb(GtkWidget * widget, gpointer data)
+{
+    system("cd /home/mbs/src/mbs-computerlab-signout/; python ./backup.py");
+}
+
+static void reload_cb(GtkWidget * widget, gpointer data)
 {
     // Clear cookies
     SoupSession * session = NULL;
@@ -117,7 +123,7 @@ static GtkWidget * create_toolbar()
     gtk_box_pack_start(GTK_BOX(toolbar), item, FALSE, FALSE, 5);
 
     item = gtk_button_new_with_label("Backup");
-    g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(shutdown_cb), NULL);
+    g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(backup_cb), NULL);
     gtk_box_pack_start(GTK_BOX(toolbar), item, FALSE, FALSE, 5);
 
     item = gtk_button_new_with_label("Reset");
