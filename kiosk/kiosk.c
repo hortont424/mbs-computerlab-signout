@@ -31,8 +31,45 @@
 
 char signinURL[] = "http://127.0.0.1:8080/";
 
-static GtkWidget * main_window;
-static WebKitWebView * web_view;
+static GtkWidget * main_window = NULL;
+static WebKitWebView * web_view = NULL;
+static GSource * timer = NULL;
+
+static void close_cb(GtkWidget * widget, gpointer data);
+static gboolean timer_reset_cb(gpointer data);
+static void activity_cb(WebKitWebView * wv, GParamSpec * ps, gpointer data);
+static void reload_cb(GtkWidget * widget, gpointer data);
+static void shutdown_cb(GtkWidget * widget, gpointer data);
+static void backup_cb(GtkWidget * widget, gpointer data);
+
+static void close_cb(GtkWidget * widget, gpointer data)
+{
+    gtk_main_quit();
+}
+
+static gboolean timer_reset_cb(gpointer data)
+{
+    reload_cb(NULL, NULL);
+    
+    return TRUE;
+}
+
+static void activity_cb(WebKitWebView * wv, GParamSpec * ps, gpointer data)
+{
+    // reset timer
+    if(timer)
+    {
+        // destroy old timer
+        g_source_destroy(timer);
+        
+    }
+    
+    // create new timer
+    timer = g_timeout_source_new_seconds(10 * 60);
+    g_source_set_callback(timer, timer_reset_cb, NULL, NULL);
+    g_source_attach(timer, g_main_context_default());
+}
+
 
 static void shutdown_cb(GtkWidget * widget, gpointer data)
 {
@@ -107,6 +144,9 @@ static GtkWidget * create_browser()
                                    GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
     web_view = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_signal_connect(web_view, "notify::load-status", G_CALLBACK(activity_cb),
+                     NULL);
+
     gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(web_view));
     gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(scrolled_window));
 
@@ -136,7 +176,7 @@ static GtkWidget * create_toolbar()
 static GtkWidget * create_window()
 {
     GtkWidget * window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
+    g_signal_connect(G_OBJECT(window), "hide", G_CALLBACK(close_cb), NULL);
     gtk_widget_set_name(window, "MBS Sign-in");
 
     return window;
