@@ -24,6 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <string.h>
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
@@ -34,6 +35,11 @@ char signinURL[] = "http://127.0.0.1:8080/";
 static GtkWidget * main_window = NULL;
 static WebKitWebView * web_view = NULL;
 static GSource * timer = NULL;
+static GMount * backup_mount = NULL;
+static GtkWidget * backup_button = NULL;
+
+static gboolean backup_disk_inserted();
+static void monitor_backup_disk();
 
 static void close_cb(GtkWidget * widget, gpointer data);
 static gboolean timer_reset_cb(gpointer data);
@@ -41,6 +47,55 @@ static void activity_cb(WebKitWebView * wv, GParamSpec * ps, gpointer data);
 static void reload_cb(GtkWidget * widget, gpointer data);
 static void shutdown_cb(GtkWidget * widget, gpointer data);
 static void backup_cb(GtkWidget * widget, gpointer data);
+static void backup_disk_changed_cb(GVolumeMonitor * volume_monitor,
+                                   GMount * mount, gpointer user_data);
+
+static void backup_disk_changed_cb(GVolumeMonitor * volume_monitor,
+                                   GMount * mount, gpointer user_data)
+{
+    gtk_widget_set_sensitive(backup_button, backup_disk_inserted());
+}
+
+static void monitor_backup_disk()
+{
+    GVolumeMonitor * gvm = NULL;
+    gvm = g_volume_monitor_get();
+    g_signal_connect(G_OBJECT(gvm), "mount-added",
+                     G_CALLBACK(backup_disk_changed_cb), NULL);
+    g_signal_connect(G_OBJECT(gvm), "mount-removed",
+                     G_CALLBACK(backup_disk_changed_cb), NULL);
+}
+
+static gboolean backup_disk_inserted()
+{
+    GVolumeMonitor * gvm = NULL;
+    GList * mounts = NULL;
+    
+    gvm = g_volume_monitor_get();
+    mounts = g_volume_monitor_get_mounts(gvm);
+    
+    if(!mounts)
+        goto give_up;
+    
+    do
+    {
+        GFile * root = NULL;
+        root = g_mount_get_root(mounts->data);
+        
+        if(strcmp(g_file_get_path(root), "/media/backups") == 0)
+        {
+            backup_mount = (GMount *)(mounts->data);
+            return true;
+        }
+        
+        g_object_unref(root);
+    }
+    while((mounts = g_list_next(mounts)) != NULL);
+
+give_up:
+    backup_mount = NULL;
+    return false;
+}
 
 static void close_cb(GtkWidget * widget, gpointer data)
 {
@@ -61,7 +116,6 @@ static void activity_cb(WebKitWebView * wv, GParamSpec * ps, gpointer data)
     {
         // destroy old timer
         g_source_destroy(timer);
-        
     }
     
     // create new timer
@@ -69,7 +123,6 @@ static void activity_cb(WebKitWebView * wv, GParamSpec * ps, gpointer data)
     g_source_set_callback(timer, timer_reset_cb, NULL, NULL);
     g_source_attach(timer, g_main_context_default());
 }
-
 
 static void shutdown_cb(GtkWidget * widget, gpointer data)
 {
@@ -98,6 +151,7 @@ static void shutdown_cb(GtkWidget * widget, gpointer data)
 static void backup_cb(GtkWidget * widget, gpointer data)
 {
     system("cd /home/mbs/src/mbs-computerlab-signout/; python ./backup.py");
+    system("sudo umount /media/backups");
 }
 
 static void reload_cb(GtkWidget * widget, gpointer data)
@@ -165,6 +219,8 @@ static GtkWidget * create_toolbar()
     item = gtk_button_new_with_label("Backup");
     g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(backup_cb), NULL);
     gtk_box_pack_start(GTK_BOX(toolbar), item, FALSE, FALSE, 5);
+    gtk_widget_set_sensitive(item, backup_disk_inserted());
+    backup_button = item;
 
     item = gtk_button_new_with_label("Reset");
     g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(reload_cb), NULL);
@@ -200,6 +256,9 @@ int main(int argc, char ** argv)
     gtk_widget_grab_focus(GTK_WIDGET(web_view));
     gtk_widget_show_all(main_window);
     gtk_window_fullscreen(GTK_WINDOW(main_window));
+    
+    monitor_backup_disk();
+    
     gtk_main();
 
     return 0;

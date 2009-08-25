@@ -9,7 +9,7 @@ import codecs
 import sys
 from time import time
 
-tarball_dir = "."
+tarball_dir = "/media/backups/"
 backup_date = str(int(time()))
 backup_dir = os.path.join("/tmp", "backup", backup_date)
 
